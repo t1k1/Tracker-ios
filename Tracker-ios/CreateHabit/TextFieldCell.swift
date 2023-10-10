@@ -20,8 +20,10 @@ final class TextFieldCell: UITableViewCell {
         return textField
     }()
     
+    //MARK: - Delegate
     weak var delegate: TextFieldDelegate?
     
+    //MARK: - Main function
     func configureCell() {
         contentView.backgroundColor = UIColor.ypBackground
         
@@ -30,6 +32,7 @@ final class TextFieldCell: UITableViewCell {
     }
 }
 
+//MARK: - Private functions
 private extension TextFieldCell {
     func addSubViews() {
         contentView.addSubview(nameHabitTextField)
@@ -61,7 +64,7 @@ extension TextFieldCell: UITextFieldDelegate {
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         delegate?.updateHabitName(with: textField.text)
-
+        
         return true
     }
 }

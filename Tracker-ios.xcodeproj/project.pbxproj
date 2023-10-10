@@ -94,20 +94,20 @@
 		D59466E42AC580CC00BD76FB /* Tracker-ios */ = {
 			isa = PBXGroup;
 			children = (
-				D59467B72AD41FFB00BD76FB /* MockData.swift */,
-				D59467A62ACC199E00BD76FB /* SelectShedule */,
-				D59467A32ACC191800BD76FB /* SelectCategory */,
-				D59467982ACBEE9000BD76FB /* CreateHabit */,
-				D59467952ACBE8FF00BD76FB /* AddNewTracker */,
 				D594678E2ACB00BB00BD76FB /* Models */,
 				D594678C2ACAACCF00BD76FB /* TabBar */,
 				D59467892ACAACB000BD76FB /* TrackerView */,
 				D594678D2ACAACDD00BD76FB /* StatisticsView */,
+				D59467952ACBE8FF00BD76FB /* AddNewTracker */,
+				D59467982ACBEE9000BD76FB /* CreateHabit */,
+				D59467A32ACC191800BD76FB /* SelectCategory */,
+				D59467A62ACC199E00BD76FB /* SelectShedule */,
 				D59467842ACAA9A900BD76FB /* Helpers */,
+				D59467B72AD41FFB00BD76FB /* MockData.swift */,
 				D59466E52AC580CC00BD76FB /* AppDelegate.swift */,
 				D59466E72AC580CC00BD76FB /* SceneDelegate.swift */,
-				D59466EE2AC580CD00BD76FB /* Assets.xcassets */,
 				D59466F02AC580CD00BD76FB /* LaunchScreen.storyboard */,
+				D59466EE2AC580CD00BD76FB /* Assets.xcassets */,
 				D59466F32AC580CD00BD76FB /* Info.plist */,
 			);
 			path = "Tracker-ios";

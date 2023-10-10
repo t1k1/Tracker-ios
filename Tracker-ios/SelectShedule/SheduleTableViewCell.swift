@@ -29,9 +29,13 @@ final class SheduleTableViewCell: UITableViewCell {
         return switcherView
     }()
     
+    //MARK: - Delegate
     weak var delegate: SheduleTableCellDelegate?
+    
+    //MARK: - Private variables
     private var weekDay: WeekDay?
     
+    //MARK: - Main function
     func configureCell(weekDay: WeekDay) {
         nameLabel.text = weekDay.dayName
         self.weekDay = weekDay
@@ -41,6 +45,7 @@ final class SheduleTableViewCell: UITableViewCell {
     }
 }
 
+//MARK: - Private functions
 private extension SheduleTableViewCell {
     func addSubViews() {
         contentView.backgroundColor = UIColor.ypBackground

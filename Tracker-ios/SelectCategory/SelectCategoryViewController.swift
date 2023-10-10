@@ -7,6 +7,7 @@
 
 import UIKit
 
+//MARK: - Protocols
 protocol CreateNewCategoryDelegate: AnyObject {
     func createNewCategory(category: String)
 }
@@ -71,10 +72,11 @@ final class SelectCategoryViewController: UIViewController {
         return tableView
     }()
     
-    //MARK: - Variables
-    private var mockData = MockData.shared
-//    private var categories: [TrackerCategory] = MockData.shared.getCategories()
+    //MARK: - Delegate
     weak var delegate: CreateHabitDelegate?
+    
+    //MARK: - Private variables
+    private var mockData = MockData.shared
     
     //MARK: - Lyfecycle
     override func viewDidLoad() {
@@ -84,6 +86,7 @@ final class SelectCategoryViewController: UIViewController {
     }
 }
 
+//MARK: - Private functions
 private extension SelectCategoryViewController {
     func setUpView() {
         view.backgroundColor = UIColor.ypWhite
@@ -150,15 +153,16 @@ private extension SelectCategoryViewController {
     }
 }
 
+//MARK: - CreateNewCategoryDelegate
 extension SelectCategoryViewController: CreateNewCategoryDelegate {
     func createNewCategory(category: String) {
         
         MockData.shared.addCategory(categoryName: category, trackers: [])
-//        categorysMock = MockData.shared.getCategories()
         categoryTableView.reloadData()
     }
 }
 
+//MARK: - UITableViewDataSource
 extension SelectCategoryViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return mockData.getCategories().count
@@ -178,9 +182,10 @@ extension SelectCategoryViewController: UITableViewDataSource {
         
         return cell
     }
-
+    
 }
 
+//MARK: - UITableViewDelegate
 extension SelectCategoryViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let delegate = delegate else {

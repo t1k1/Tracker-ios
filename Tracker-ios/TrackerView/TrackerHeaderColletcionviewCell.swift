@@ -7,7 +7,8 @@
 
 import UIKit
 
-final class TrackerHeaderColletcionviewCell: UICollectionReusableView {    
+final class TrackerHeaderColletcionviewCell: UICollectionReusableView {
+    //MARK: - Layout variables
     private lazy var headerLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -19,6 +20,7 @@ final class TrackerHeaderColletcionviewCell: UICollectionReusableView {
         return label
     }()
     
+    //MARK: - Main function
     func configureCell(header: String) {
         headerLabel.text = header
         
@@ -27,6 +29,7 @@ final class TrackerHeaderColletcionviewCell: UICollectionReusableView {
     }
 }
 
+//MARK: - Private function
 private extension TrackerHeaderColletcionviewCell {
     func addSubViews() {
         addSubview(headerLabel)

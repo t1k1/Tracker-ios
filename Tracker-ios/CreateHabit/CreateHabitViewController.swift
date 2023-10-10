@@ -7,6 +7,7 @@
 
 import UIKit
 
+//MARK: - Protocols
 protocol CreateHabitDelegate: AnyObject {
     func updateCategory(category: TrackerCategory)
 }
@@ -19,11 +20,8 @@ protocol TextFieldDelegate: AnyObject {
     func updateHabitName(with name: String?)
 }
 
+//MARK: - CreateHabitViewController
 final class CreateHabitViewController: UIViewController {
-    private struct const {
-        static let tableCellNames = [["textField"],["category","shedule"]]
-    }
-    
     //MARK: - Layout variables
     private lazy var headerLabel: UILabel = {
         let label = UILabel()
@@ -73,11 +71,16 @@ final class CreateHabitViewController: UIViewController {
         return button
     }()
     
+    //MARK: - Delegate
+    weak var delegate: TrackerViewControllerDelegate?
+    
     //MARK: - Private variables
     private var category: TrackerCategory?
     private var sheduleArr: [WeekDay]?
     private var habitName: String?
-    weak var delegate: TrackerViewControllerDelegate?
+    private struct const {
+        static let tableCellNames = [["textField"],["category","shedule"]]
+    }
     
     //MARK: - Lyfecycle
     override func viewDidLoad() {
@@ -88,6 +91,7 @@ final class CreateHabitViewController: UIViewController {
 }
 
 private extension CreateHabitViewController {
+    //MARK: - Configurating functions
     func setUpView() {
         view.backgroundColor = UIColor.white
         
@@ -133,23 +137,7 @@ private extension CreateHabitViewController {
         ])
     }
     
-    @objc
-    func create() {
-        if let category = category,
-           let sheduleArr = sheduleArr,
-           let habitName = habitName,
-           let delegate = delegate {
-         
-            delegate.addNewTracker(category: category, sheduleArr: sheduleArr, habitName: habitName)
-            dismiss(animated: true)
-        }
-    }
-    
-    @objc
-    func cancel() {
-        dismiss(animated: true)
-    }
-    
+    //MARK: - Private class functions
     func selectCell(indexPath: IndexPath) {
         var viewController: UIViewController?
         
@@ -170,7 +158,7 @@ private extension CreateHabitViewController {
         } else if let viewController = viewController as? SelectSheduleViewController {
             viewController.delegate = self
         }
-    
+        
         let navigatonViewController = UINavigationController(rootViewController: viewController)
         present(navigatonViewController, animated: true)
     }
@@ -206,8 +194,27 @@ private extension CreateHabitViewController {
             createButton.isEnabled = false
         }
     }
+    
+    //MARK: - Buttons functions
+    @objc
+    func create() {
+        if let category = category,
+           let sheduleArr = sheduleArr,
+           let habitName = habitName,
+           let delegate = delegate {
+            
+            delegate.addNewTracker(category: category, sheduleArr: sheduleArr, habitName: habitName)
+            dismiss(animated: true)
+        }
+    }
+    
+    @objc
+    func cancel() {
+        dismiss(animated: true)
+    }
 }
 
+//MARK: - UITableViewDelegate
 extension CreateHabitViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         selectCell(indexPath: indexPath)
@@ -215,6 +222,7 @@ extension CreateHabitViewController: UITableViewDelegate {
     }
 }
 
+//MARK: - UITableViewDataSource
 extension CreateHabitViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return const.tableCellNames[section].count
@@ -253,7 +261,7 @@ extension CreateHabitViewController: UITableViewDataSource {
                 text = "Расписание"
                 description = stringFromSheduleArr()
             }
-
+            
             cell.configureCell(text: text, description: description)
             
             return cell
@@ -274,6 +282,7 @@ extension CreateHabitViewController: UITableViewDataSource {
     }
 }
 
+//MARK: - CreateHabitDelegate
 extension CreateHabitViewController: CreateHabitDelegate {
     func updateCategory(category: TrackerCategory) {
         self.category = category
@@ -282,6 +291,7 @@ extension CreateHabitViewController: CreateHabitDelegate {
     }
 }
 
+//MARK: - SelectSheduleDelegate
 extension CreateHabitViewController: SelectSheduleDelegate {
     func updateShedule(shedule: [WeekDay]) {
         self.sheduleArr = shedule
@@ -290,6 +300,7 @@ extension CreateHabitViewController: SelectSheduleDelegate {
     }
 }
 
+//MARK: - TextFieldDelegate
 extension CreateHabitViewController: TextFieldDelegate {
     func updateHabitName(with name: String?) {
         self.habitName = name

@@ -7,6 +7,7 @@
 
 import UIKit
 
+//MARK: - Protocols
 protocol SheduleTableCellDelegate: AnyObject {
     func addDay(nameOfDay: WeekDay)
     func removeDay(nameOfDay: WeekDay)
@@ -49,7 +50,10 @@ final class SelectSheduleViewController: UIViewController {
         return tableView
     }()
     
+    //MARK: - Delegate
     weak var delegate: SelectSheduleDelegate?
+    
+    //MARK: - Private variables
     private var allDays = WeekDay.allCases
     private var selectedDays: [WeekDay] = []
     
@@ -61,6 +65,7 @@ final class SelectSheduleViewController: UIViewController {
     }
 }
 
+//MARK: - Private functions
 private extension SelectSheduleViewController {
     func setUpView() {
         view.backgroundColor = UIColor.ypWhite
@@ -107,6 +112,7 @@ private extension SelectSheduleViewController {
     }
 }
 
+//MARK: - UITableViewDataSource
 extension SelectSheduleViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return WeekDay.allCases.count
@@ -126,12 +132,14 @@ extension SelectSheduleViewController: UITableViewDataSource {
     }
 }
 
+//MARK: - UITableViewDelegate
 extension SelectSheduleViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
     }
 }
 
+//MARK: - SheduleTableCellDelegate
 extension SelectSheduleViewController: SheduleTableCellDelegate {
     func addDay(nameOfDay: WeekDay) {
         selectedDays.append(nameOfDay)

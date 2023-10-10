@@ -28,6 +28,7 @@ final class CategoryTableViewCell: UITableViewCell {
         return imageview
     }()
     
+    //MARK: - Main function
     func configureCell(text: String) {
         nameLabel.text = text
         
@@ -38,6 +39,7 @@ final class CategoryTableViewCell: UITableViewCell {
     }
 }
 
+//MARK: - Private functions
 private extension CategoryTableViewCell {
     func addSubViews() {
         contentView.addSubview(nameLabel)

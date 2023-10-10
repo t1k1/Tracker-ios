@@ -46,6 +46,7 @@ final class CreateNewCategoryViewController: UIViewController {
         return button
     }()
     
+    //MARK: - Delegate
     weak var delegate: CreateNewCategoryDelegate?
     
     //MARK: - Lyfecycle
@@ -73,6 +74,7 @@ extension CreateNewCategoryViewController: UITextFieldDelegate {
     }
 }
 
+//MARK: - Private functions
 private extension CreateNewCategoryViewController {
     func setUpView() {
         view.backgroundColor = UIColor.ypWhite
@@ -92,12 +94,12 @@ private extension CreateNewCategoryViewController {
             headerLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             headerLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 26),
             headerLabel.heightAnchor.constraint(equalToConstant: 22),
-
+            
             nameCategoryTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             nameCategoryTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             nameCategoryTextField.heightAnchor.constraint(equalToConstant: 75),
             nameCategoryTextField.topAnchor.constraint(equalTo: headerLabel.bottomAnchor, constant: 38),
-
+            
             doneButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             doneButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             doneButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),

@@ -7,6 +7,7 @@
 
 import UIKit
 
+//MARK: - Protocols
 protocol TrackerViewControllerDelegate: AnyObject {
     func addNewTracker(category: TrackerCategory, sheduleArr: [WeekDay], habitName: String)
 }
@@ -14,6 +15,7 @@ protocol TrackerCellDelegate: AnyObject {
     func updateTrackerRecord(id: UInt, isCompleted: Bool, indexPath: IndexPath)
 }
 
+//MARK: - TrackerViewController
 class TrackerViewController: UIViewController {
     
     //MARK: - Layout variables
@@ -129,27 +131,22 @@ class TrackerViewController: UIViewController {
     
     //MARK: - Private variables
     private let mockData = MockData.shared
-    ///Список категорий и вложенных в них трекеров
-    var categories: [TrackerCategory] = []
+    private var categories: [TrackerCategory] = []
+    private var completedTrackers: [TrackerRecord] = []
+    private var visibleCategories: [TrackerCategory] = []
+    private var currentDate: Date?
     
-    ///трекеры, которые были «выполнены» в выбранную дату,
-    var completedTrackers: [TrackerRecord] = []
-    ///чтобы при поиске и/или изменении дня недели отображался другой набор трекеров
-    var visibleCategories: [TrackerCategory] = []
-    ///для хранения текущей даты в
-    var currentDate: Date?
-
     //MARK: - Lyfecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
-//        categories.append(TrackerCategory(header: "Моковый заголовок", trackers: [allTrackers[0]]))
         updateCategories()
         setUpView()
     }
 }
 
 private extension TrackerViewController {
+    //MARK: - Configurating functions
     func setUpView() {
         view.backgroundColor = UIColor.ypWhite
         
@@ -175,12 +172,12 @@ private extension TrackerViewController {
     func addSubViews(){
         view.addSubview(topNavView)
         view.addSubview(collectionView)
-
+        
         topNavView.addSubview(addButton)
         topNavView.addSubview(datePicker)
         topNavView.addSubview(titleLabel)
         topNavView.addSubview(stackViewForSearch)
-
+        
         stackViewForSearch.addArrangedSubview(searchField)
         stackViewForSearch.addArrangedSubview(cancelSearchButton)
         
@@ -197,13 +194,13 @@ private extension TrackerViewController {
             
             addButton.topAnchor.constraint(equalTo: topNavView.topAnchor),
             addButton.leadingAnchor.constraint(equalTo: topNavView.leadingAnchor),
-
+            
             datePicker.trailingAnchor.constraint(equalTo: topNavView.trailingAnchor),
             datePicker.topAnchor.constraint(equalTo: topNavView.topAnchor),
-
+            
             titleLabel.leadingAnchor.constraint(equalTo: topNavView.leadingAnchor),
             titleLabel.topAnchor.constraint(equalTo: addButton.bottomAnchor, constant: 13),
-
+            
             stackViewForSearch.leadingAnchor.constraint(equalTo: topNavView.leadingAnchor),
             stackViewForSearch.trailingAnchor.constraint(equalTo: topNavView.trailingAnchor),
             stackViewForSearch.heightAnchor.constraint(equalToConstant: 30),
@@ -213,17 +210,18 @@ private extension TrackerViewController {
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             collectionView.topAnchor.constraint(equalTo: topNavView.bottomAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-
+            
             centerImageView.widthAnchor.constraint(equalToConstant: 80),
             centerImageView.heightAnchor.constraint(equalToConstant: 80),
             centerImageView.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
             centerImageView.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),
-
+            
             centerLabel.topAnchor.constraint(equalTo: centerImageView.bottomAnchor, constant: 8),
             centerLabel.centerXAnchor.constraint(equalTo: centerImageView.centerXAnchor)
         ])
     }
     
+    //MARK: - Buttons functions
     @objc
     func addTracker() {
         let addNewTrackerViewController = AddNewTrackerViewController()
@@ -244,6 +242,7 @@ private extension TrackerViewController {
         showFilteredTrackersByDay()
     }
     
+    //MARK: - Private class functions
     func showFilteredTrackersByDay() {
         currentDate = datePicker.date
         
@@ -336,6 +335,7 @@ private extension TrackerViewController {
     }
 }
 
+//MARK: - UITextFieldDelegate
 extension TrackerViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
@@ -350,6 +350,7 @@ extension TrackerViewController: UITextFieldDelegate {
     }
 }
 
+//MARK: - TrackerViewControllerDelegate
 extension TrackerViewController: TrackerViewControllerDelegate {
     func addNewTracker(category: TrackerCategory, sheduleArr: [WeekDay], habitName: String) {
         mockData.addTrackerInCategory(
@@ -428,7 +429,7 @@ extension TrackerViewController: UICollectionViewDelegateFlowLayout {
     ) -> CGSize {
         return CGSize(width: collectionView.bounds.width / 2.2, height: 132)
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         let width = collectionView.frame.width
         return CGSize(width: width, height: 30)

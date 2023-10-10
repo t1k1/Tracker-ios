@@ -41,7 +41,8 @@ final class AddNewTrackerViewController: UIViewController {
         
         return button
     }()
-   
+    
+    //MARK: - Delegate
     weak var delegate: TrackerViewControllerDelegate?
     
     //MARK: - Lyfecycle
@@ -52,6 +53,7 @@ final class AddNewTrackerViewController: UIViewController {
     }
 }
 
+//MARK: - Private functions
 private extension AddNewTrackerViewController {
     func setUpView() {
         view.backgroundColor = UIColor.white
@@ -94,6 +96,6 @@ private extension AddNewTrackerViewController {
     
     @objc
     func createEvent() {
-        
+        //TODO: - Реализовать создание нерегулярного события
     }
 }

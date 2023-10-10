@@ -8,6 +8,7 @@
 import UIKit
 
 final class TrackerCollectionViewCell: UICollectionViewCell {
+    //MARK: - Layout variables
     private lazy var emojiLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -44,7 +45,6 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         
-//        button.setTitle("+", for: .normal)
         let image = UIImage(systemName: "plus", withConfiguration: UIImage.SymbolConfiguration(pointSize: 11))
         button.setImage(image, for: .normal)
         button.addTarget(self, action: #selector(plusButtonTap), for: .touchUpInside)
@@ -72,12 +72,16 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         return stackView
     }()
     
+    //MARK: - Delegate
     weak var delegate: TrackerCellDelegate?
+    
+    //MARK: - Private variables
     private var isCompleted: Bool = false
     private var trackerId: UInt?
     private var indexPath: IndexPath?
     private var selectedDate: Date?
     
+    //MARK: - Main function
     func configureCell(tracker: Tracker, isCompleted: Bool, daysCount: Int, indexPath: IndexPath, selectedDate: Date) {
         self.prepareForReuse()
         
@@ -85,7 +89,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         self.trackerId = tracker.id
         self.indexPath = indexPath
         self.selectedDate = selectedDate
-    
+        
         changePlusButton()
         daysLabel.text = getTextForDaysLabel(daysCount: daysCount)
         
@@ -100,6 +104,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     }
 }
 
+//MARK: - Private functions
 private extension TrackerCollectionViewCell {
     func addSubViews() {
         contentView.addSubview(colorView)
@@ -137,24 +142,6 @@ private extension TrackerCollectionViewCell {
         ])
     }
     
-    @objc
-    func plusButtonTap() {
-        
-        guard let trackerId = trackerId,
-              let indexPath = indexPath,
-              let selectedDate = selectedDate else {
-            return
-        }
-        
-        if selectedDate > Date() {
-            return
-        }
-        
-        isCompleted = !isCompleted
-        changePlusButton()
-        delegate?.updateTrackerRecord(id: trackerId, isCompleted: isCompleted, indexPath: indexPath)
-    }
-    
     func changePlusButton() {
         if isCompleted {
             plusButton.alpha = 0.5
@@ -186,5 +173,23 @@ private extension TrackerCollectionViewCell {
                 strDay = "дней";
         }
         return "\(daysCount) \(strDay)"
+    }
+    
+    @objc
+    func plusButtonTap() {
+        
+        guard let trackerId = trackerId,
+              let indexPath = indexPath,
+              let selectedDate = selectedDate else {
+            return
+        }
+        
+        if selectedDate > Date() {
+            return
+        }
+        
+        isCompleted = !isCompleted
+        changePlusButton()
+        delegate?.updateTrackerRecord(id: trackerId, isCompleted: isCompleted, indexPath: indexPath)
     }
 }

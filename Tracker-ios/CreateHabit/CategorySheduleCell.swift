@@ -39,6 +39,7 @@ final class CategorySheduleCell: UITableViewCell {
         return imageView
     }()
     
+    //MARK: - Main function
     func configureCell(text: String, description: String?) {
         contentView.backgroundColor = UIColor.ypBackground
         
@@ -53,6 +54,7 @@ final class CategorySheduleCell: UITableViewCell {
     }
 }
 
+//MARK: - Private functions
 private extension CategorySheduleCell {
     func addSubViews() {
         contentView.addSubview(titleLabel)

@@ -13,7 +13,7 @@ final class TabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = UIColor.ypWhite
+        setupView()
         
         let trackerViewController = TrackerViewController()
         trackerViewController.tabBarItem = UITabBarItem(
@@ -30,5 +30,13 @@ final class TabBarController: UITabBarController {
         )
         
         self.viewControllers = [trackerViewController, statisticsViewController]
+    }
+}
+
+private extension TabBarController {
+    func setupView() {
+        view.backgroundColor = UIColor.ypWhite
+        tabBar.layer.borderWidth = 0.2
+        tabBar.layer.borderColor = UIColor.ypBlack.cgColor
     }
 }

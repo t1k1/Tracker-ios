@@ -20,6 +20,8 @@ final class TextFieldCell: UITableViewCell {
         return textField
     }()
     
+    weak var delegate: TextFieldDelegate?
+    
     func configureCell() {
         contentView.backgroundColor = UIColor.ypBackground
         
@@ -55,5 +57,11 @@ extension TextFieldCell: UITextFieldDelegate {
         guard let currentString = currentString else { return true }
         let newString: NSString = currentString.replacingCharacters(in: range, with: string) as NSString
         return newString.length <= maxLength
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        delegate?.updateHabitName(with: textField.text)
+
+        return true
     }
 }

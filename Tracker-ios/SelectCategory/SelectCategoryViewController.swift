@@ -72,8 +72,9 @@ final class SelectCategoryViewController: UIViewController {
     }()
     
     //MARK: - Variables
-    private var categorysMock: [TrackerCategory] = [TrackerCategory(header: "Стандартная категория", trackers: [])]
-    var delegate: CreateHabitDelegate?
+    private var mockData = MockData.shared
+//    private var categories: [TrackerCategory] = MockData.shared.getCategories()
+    weak var delegate: CreateHabitDelegate?
     
     //MARK: - Lyfecycle
     override func viewDidLoad() {
@@ -86,7 +87,7 @@ final class SelectCategoryViewController: UIViewController {
 private extension SelectCategoryViewController {
     func setUpView() {
         view.backgroundColor = UIColor.ypWhite
-        if categorysMock.count > 0 {
+        if mockData.getCategories().count > 0 {
             categoryTableView.isHidden = false
             centerLabel.isHidden = true
             centerImageView.isHidden = true
@@ -152,18 +153,19 @@ private extension SelectCategoryViewController {
 extension SelectCategoryViewController: CreateNewCategoryDelegate {
     func createNewCategory(category: String) {
         
-        categorysMock.append(TrackerCategory(header: category, trackers: []))
+        MockData.shared.addCategory(categoryName: category, trackers: [])
+//        categorysMock = MockData.shared.getCategories()
         categoryTableView.reloadData()
     }
 }
 
 extension SelectCategoryViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return categorysMock.count
+        return mockData.getCategories().count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let header = categorysMock[indexPath.row].header
+        let header = mockData.getCategories()[indexPath.row].header
         
         guard let cell = categoryTableView.dequeueReusableCell(
             withIdentifier: "categoryTableCell",
@@ -185,7 +187,7 @@ extension SelectCategoryViewController: UITableViewDelegate {
             tableView.deselectRow(at: indexPath, animated: false)
             return
         }
-        delegate.updateCategory(category: categorysMock[indexPath.row])
+        delegate.updateCategory(category: mockData.getCategories()[indexPath.row])
         tableView.deselectRow(at: indexPath, animated: false)
         dismiss(animated: true)
     }

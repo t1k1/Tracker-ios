@@ -29,6 +29,9 @@
 		D59467AE2ACC3FF200BD76FB /* CategoryTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59467AD2ACC3FF200BD76FB /* CategoryTableViewCell.swift */; };
 		D59467B02ACD5E1200BD76FB /* SheduleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59467AF2ACD5E1200BD76FB /* SheduleTableViewCell.swift */; };
 		D59467B22ACD7D8300BD76FB /* WeekDay.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59467B12ACD7D8300BD76FB /* WeekDay.swift */; };
+		D59467B42AD0008300BD76FB /* TrackerCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59467B32AD0008300BD76FB /* TrackerCollectionViewCell.swift */; };
+		D59467B62AD00C7F00BD76FB /* TrackerHeaderColletcionviewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59467B52AD00C7F00BD76FB /* TrackerHeaderColletcionviewCell.swift */; };
+		D59467B82AD41FFB00BD76FB /* MockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59467B72AD41FFB00BD76FB /* MockData.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -56,6 +59,9 @@
 		D59467AD2ACC3FF200BD76FB /* CategoryTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryTableViewCell.swift; sourceTree = "<group>"; };
 		D59467AF2ACD5E1200BD76FB /* SheduleTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheduleTableViewCell.swift; sourceTree = "<group>"; };
 		D59467B12ACD7D8300BD76FB /* WeekDay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekDay.swift; sourceTree = "<group>"; };
+		D59467B32AD0008300BD76FB /* TrackerCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCollectionViewCell.swift; sourceTree = "<group>"; };
+		D59467B52AD00C7F00BD76FB /* TrackerHeaderColletcionviewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerHeaderColletcionviewCell.swift; sourceTree = "<group>"; };
+		D59467B72AD41FFB00BD76FB /* MockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockData.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,6 +94,7 @@
 		D59466E42AC580CC00BD76FB /* Tracker-ios */ = {
 			isa = PBXGroup;
 			children = (
+				D59467B72AD41FFB00BD76FB /* MockData.swift */,
 				D59467A62ACC199E00BD76FB /* SelectShedule */,
 				D59467A32ACC191800BD76FB /* SelectCategory */,
 				D59467982ACBEE9000BD76FB /* CreateHabit */,
@@ -119,6 +126,8 @@
 			isa = PBXGroup;
 			children = (
 				D59466E92AC580CC00BD76FB /* TrackerViewController.swift */,
+				D59467B32AD0008300BD76FB /* TrackerCollectionViewCell.swift */,
+				D59467B52AD00C7F00BD76FB /* TrackerHeaderColletcionviewCell.swift */,
 			);
 			path = TrackerView;
 			sourceTree = "<group>";
@@ -271,11 +280,14 @@
 				D594679E2ACBFCD500BD76FB /* CategorySheduleCell.swift in Sources */,
 				D594679A2ACBEEAE00BD76FB /* CreateHabitViewController.swift in Sources */,
 				D59467942ACB00EA00BD76FB /* TrackerRecordModel.swift in Sources */,
+				D59467B82AD41FFB00BD76FB /* MockData.swift in Sources */,
 				D59467882ACAAAAA00BD76FB /* StatisticsViewController.swift in Sources */,
 				D59466E62AC580CC00BD76FB /* AppDelegate.swift in Sources */,
 				D59466E82AC580CC00BD76FB /* SceneDelegate.swift in Sources */,
 				D59467A82ACC19B200BD76FB /* SelectSheduleViewController.swift in Sources */,
+				D59467B62AD00C7F00BD76FB /* TrackerHeaderColletcionviewCell.swift in Sources */,
 				D59467902ACB00CB00BD76FB /* TrackerModel.swift in Sources */,
+				D59467B42AD0008300BD76FB /* TrackerCollectionViewCell.swift in Sources */,
 				D59467AE2ACC3FF200BD76FB /* CategoryTableViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

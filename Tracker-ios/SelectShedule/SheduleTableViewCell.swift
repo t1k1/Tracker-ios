@@ -29,7 +29,7 @@ final class SheduleTableViewCell: UITableViewCell {
         return switcherView
     }()
     
-    var delegate: SheduleTableCellDelegate?
+    weak var delegate: SheduleTableCellDelegate?
     private var weekDay: WeekDay?
     
     func configureCell(weekDay: WeekDay) {

@@ -15,6 +15,10 @@ protocol SelectSheduleDelegate: AnyObject {
     func updateShedule(shedule: [WeekDay])
 }
 
+protocol TextFieldDelegate: AnyObject {
+    func updateHabitName(with name: String?)
+}
+
 final class CreateHabitViewController: UIViewController {
     private struct const {
         static let tableCellNames = [["textField"],["category","shedule"]]
@@ -61,6 +65,7 @@ final class CreateHabitViewController: UIViewController {
         button.setTitle("Создать", for: .normal)
         button.addTarget(self, action: #selector(create), for: .touchUpInside)
         button.backgroundColor = UIColor.ypGray
+        button.isEnabled = false
         button.setTitleColor(UIColor.ypWhite, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.layer.cornerRadius = 16
@@ -71,6 +76,8 @@ final class CreateHabitViewController: UIViewController {
     //MARK: - Private variables
     private var category: TrackerCategory?
     private var sheduleArr: [WeekDay]?
+    private var habitName: String?
+    weak var delegate: TrackerViewControllerDelegate?
     
     //MARK: - Lyfecycle
     override func viewDidLoad() {
@@ -128,7 +135,14 @@ private extension CreateHabitViewController {
     
     @objc
     func create() {
-        
+        if let category = category,
+           let sheduleArr = sheduleArr,
+           let habitName = habitName,
+           let delegate = delegate {
+         
+            delegate.addNewTracker(category: category, sheduleArr: sheduleArr, habitName: habitName)
+            dismiss(animated: true)
+        }
     }
     
     @objc
@@ -174,6 +188,24 @@ private extension CreateHabitViewController {
         let navigatonViewController = UINavigationController(rootViewController: selectSheduleViewController)
         present(navigatonViewController, animated: true)
     }
+    
+    func changeCreateButton() {
+        if let category = category,
+           let sheduleArr = sheduleArr,
+           let habitName = habitName,
+           let _ = delegate,
+           category.header.count > 0,
+           habitName.count > 0,
+           sheduleArr.count > 0
+        {
+            
+            createButton.backgroundColor = UIColor.ypBlack
+            createButton.isEnabled = true
+        } else {
+            createButton.backgroundColor = UIColor.ypGray
+            createButton.isEnabled = false
+        }
+    }
 }
 
 extension CreateHabitViewController: UITableViewDelegate {
@@ -200,6 +232,7 @@ extension CreateHabitViewController: UITableViewDataSource {
             ) as? TextFieldCell else {
                 return UITableViewCell()
             }
+            cell.delegate = self
             cell.configureCell()
             
             return cell
@@ -244,6 +277,7 @@ extension CreateHabitViewController: UITableViewDataSource {
 extension CreateHabitViewController: CreateHabitDelegate {
     func updateCategory(category: TrackerCategory) {
         self.category = category
+        changeCreateButton()
         tableView.reloadData()
     }
 }
@@ -251,6 +285,14 @@ extension CreateHabitViewController: CreateHabitDelegate {
 extension CreateHabitViewController: SelectSheduleDelegate {
     func updateShedule(shedule: [WeekDay]) {
         self.sheduleArr = shedule
+        changeCreateButton()
         tableView.reloadData()
+    }
+}
+
+extension CreateHabitViewController: TextFieldDelegate {
+    func updateHabitName(with name: String?) {
+        self.habitName = name
+        changeCreateButton()
     }
 }

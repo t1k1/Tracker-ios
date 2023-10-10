@@ -49,7 +49,7 @@ final class SelectSheduleViewController: UIViewController {
         return tableView
     }()
     
-    var delegate: SelectSheduleDelegate?
+    weak var delegate: SelectSheduleDelegate?
     private var allDays = WeekDay.allCases
     private var selectedDays: [WeekDay] = []
     

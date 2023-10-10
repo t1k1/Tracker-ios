@@ -42,6 +42,8 @@ final class AddNewTrackerViewController: UIViewController {
         return button
     }()
    
+    weak var delegate: TrackerViewControllerDelegate?
+    
     //MARK: - Lyfecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -83,7 +85,10 @@ private extension AddNewTrackerViewController {
     
     @objc
     func createHabit() {
-        let navigatonViewController = UINavigationController(rootViewController: CreateHabitViewController())
+        let createHabitViewController = CreateHabitViewController()
+        createHabitViewController.delegate = delegate
+        
+        let navigatonViewController = UINavigationController(rootViewController: createHabitViewController)
         present(navigatonViewController, animated: true)
     }
     

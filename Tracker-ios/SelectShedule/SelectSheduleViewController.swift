@@ -100,7 +100,7 @@ private extension SelectSheduleViewController {
             doneButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             doneButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             doneButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
-            doneButton.heightAnchor.constraint(equalToConstant: 50)
+            doneButton.heightAnchor.constraint(equalToConstant: 60)
         ])
     }
     

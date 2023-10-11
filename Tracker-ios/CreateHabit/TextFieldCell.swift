@@ -13,7 +13,6 @@ final class TextFieldCell: UITableViewCell {
         let textField = UITextField()
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.placeholder = "Введите название трекера"
-        textField.backgroundColor = UIColor.ypBackground
         textField.layer.cornerRadius = 16
         textField.delegate = self
         
@@ -35,6 +34,8 @@ final class TextFieldCell: UITableViewCell {
 //MARK: - Private functions
 private extension TextFieldCell {
     func addSubViews() {
+        contentView.backgroundColor = UIColor.ypBackground
+        
         contentView.addSubview(nameHabitTextField)
     }
     

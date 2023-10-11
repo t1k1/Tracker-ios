@@ -38,6 +38,17 @@ final class CategorySheduleCell: UITableViewCell {
         
         return imageView
     }()
+    private lazy var stackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+    
+        stackView.axis = .vertical
+        stackView.distribution = .fill
+        stackView.alignment = .leading
+        stackView.spacing = 2
+        
+        return stackView
+    }()
     
     //MARK: - Main function
     func configureCell(text: String, description: String?) {
@@ -57,20 +68,17 @@ final class CategorySheduleCell: UITableViewCell {
 //MARK: - Private functions
 private extension CategorySheduleCell {
     func addSubViews() {
-        contentView.addSubview(titleLabel)
-        contentView.addSubview(descriptionLabel)
+        contentView.addSubview(stackView)
+        stackView.addArrangedSubview(titleLabel)
+        stackView.addArrangedSubview(descriptionLabel)
         contentView.addSubview(arrowImageView)
     }
     
     func configureConstraints() {
         NSLayoutConstraint.activate([
-            titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
-            titleLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            titleLabel.heightAnchor.constraint(equalToConstant: 22),
-            
-            descriptionLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
-            descriptionLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor),
-            descriptionLabel.heightAnchor.constraint(equalTo: titleLabel.heightAnchor),
+            stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
+            stackView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            stackView.heightAnchor.constraint(equalToConstant: 46),
             
             arrowImageView.centerYAnchor.constraint(equalTo: titleLabel.centerYAnchor),
             arrowImageView.widthAnchor.constraint(equalToConstant: 13),

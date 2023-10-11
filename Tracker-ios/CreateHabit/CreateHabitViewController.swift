@@ -123,7 +123,7 @@ private extension CreateHabitViewController {
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: cancelButton.topAnchor),
-            tableView.topAnchor.constraint(equalTo: headerLabel.bottomAnchor, constant: 38),
+            tableView.topAnchor.constraint(equalTo: headerLabel.bottomAnchor),
             
             cancelButton.heightAnchor.constraint(equalToConstant: 60),
             cancelButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
@@ -204,7 +204,13 @@ private extension CreateHabitViewController {
            let delegate = delegate {
             
             delegate.addNewTracker(category: category, sheduleArr: sheduleArr, habitName: habitName)
-            dismiss(animated: true)
+            
+            guard let window = UIApplication.shared.windows.first else {
+                assertionFailure("Invalid Configuration")
+                return
+            }
+            
+            window.rootViewController = TrackerViewController()
         }
     }
     

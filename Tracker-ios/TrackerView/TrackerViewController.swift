@@ -45,7 +45,6 @@ class TrackerViewController: UIViewController {
         datePicker.locale = Locale(identifier: "ru_Ru")
         datePicker.calendar.firstWeekday = 2
         datePicker.clipsToBounds = true
-        datePicker.tintColor = UIColor.ypBlue
         datePicker.addTarget(self, action: #selector(filterDate), for: .valueChanged)
         
         return datePicker
@@ -75,6 +74,9 @@ class TrackerViewController: UIViewController {
         let search = UISearchTextField()
         search.translatesAutoresizingMaskIntoConstraints = false
         
+        search.autocorrectionType = UITextAutocorrectionType.no
+        search.returnKeyType = UIReturnKeyType.done
+        search.clearButtonMode = UITextField.ViewMode.whileEditing
         search.textColor = UIColor.ypBlack
         search.layer.cornerRadius = 16
         search.delegate = self
@@ -240,6 +242,8 @@ private extension TrackerViewController {
     func canselSearch() {
         searchField.text = ""
         showFilteredTrackersByDay()
+        cancelSearchButton.isHidden = true
+        searchField.resignFirstResponder()
     }
     
     //MARK: - Private class functions
@@ -270,12 +274,12 @@ private extension TrackerViewController {
         changeVisibility()
     }
     
-    func showFilteredTrackersByText() {
-        let text = searchField.text?.lowercased() ?? ""
+    func showFilteredTrackersByText(_ text: String) {
+        let newText = text.lowercased()
         
         visibleCategories = categories.compactMap { category in
             let tracker = category.trackers.filter { tracker in
-                let filterTextField = text.isEmpty || tracker.name.lowercased().contains(text)
+                let filterTextField = newText.isEmpty || tracker.name.lowercased().contains(newText)
                 
                 return filterTextField
             }
@@ -288,23 +292,26 @@ private extension TrackerViewController {
         }
         
         collectionView.reloadData()
-        changeVisibility()
+        changeVisibility(search: true)
     }
     
-    func changeVisibility() {
-        if categories.count > 0 && visibleCategories.count > 0 {
-            centerLabel.isHidden = true
-            centerImageView.isHidden = true
-        } else if categories.count > 0 && visibleCategories.count == 0 {
-            centerImageView.image = UIImage(named: "CenterImageSearch")
-            centerLabel.text = "Ничего не найдено"
+    func changeVisibility(search: Bool = false) {
+        var image = UIImage(named: "CenterImage")
+        var text = "Что будем отслеживать?"
+        
+        if search {
+            image = UIImage(named: "CenterImageSearch")
+            text = "Ничего не найдено"
+        }
+        
+        if visibleCategories.count == 0 {
+            centerImageView.image = image
+            centerLabel.text = text
             centerLabel.isHidden = false
             centerImageView.isHidden = false
         } else {
-            centerImageView.image = UIImage(named: "CenterImage")
-            centerLabel.text = "Что будем отслеживать?"
-            centerLabel.isHidden = false
-            centerImageView.isHidden = false
+            centerLabel.isHidden = true
+            centerImageView.isHidden = true
         }
     }
     
@@ -337,14 +344,26 @@ private extension TrackerViewController {
 
 //MARK: - UITextFieldDelegate
 extension TrackerViewController: UITextFieldDelegate {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        if let text = textField.text,
+           let textRange = Range(range, in: text) {
+            
+            let updatedText = text.replacingCharacters(in: textRange, with: string)
+            if updatedText == "" {
+                showFilteredTrackersByDay()
+            } else {
+                showFilteredTrackersByText(updatedText)
+            }
+        }
+        return true;
+    }
+
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
-        showFilteredTrackersByText()
         cancelSearchButton.isHidden = true
-        
         return true
     }
-    
+
     func textFieldDidBeginEditing(_ textField: UITextField) {
         cancelSearchButton.isHidden = false
     }

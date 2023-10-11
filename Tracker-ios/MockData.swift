@@ -10,8 +10,6 @@ import Foundation
 final class MockData {
     static let shared = MockData()
     
-    private init() {}
-    
     private var categories: [TrackerCategory] = [
         TrackerCategory(
             header: "Стандартная категория",
@@ -26,6 +24,8 @@ final class MockData {
             ]
         )
     ]
+    
+    private init() {}
     
     func getCategories() -> [TrackerCategory] {
         return categories

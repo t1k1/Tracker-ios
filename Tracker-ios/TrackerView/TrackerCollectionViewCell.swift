@@ -8,6 +8,9 @@
 import UIKit
 
 final class TrackerCollectionViewCell: UICollectionViewCell {
+    //MARK: - Public variables
+    weak var delegate: TrackerCellDelegate?
+    
     //MARK: - Layout variables
     private lazy var emojiLabel: UILabel = {
         let label = UILabel()
@@ -71,9 +74,6 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         
         return stackView
     }()
-    
-    //MARK: - Delegate
-    weak var delegate: TrackerCellDelegate?
     
     //MARK: - Private variables
     private var isCompleted: Bool = false

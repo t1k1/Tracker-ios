@@ -66,6 +66,47 @@ final class SelectSheduleViewController: UIViewController {
     }
 }
 
+//MARK: - UITableViewDataSource
+extension SelectSheduleViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return WeekDay.allCases.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = sheduleTableView.dequeueReusableCell(
+            withIdentifier: "sheduleTableCell",
+            for: indexPath
+        ) as? SheduleTableViewCell else {
+            return UITableViewCell()
+        }
+        cell.delegate = self
+        let weekDay = allDays[indexPath.row]
+        let switchIsActive = selectedDays.contains(weekDay) ? true : false
+        cell.configureCell(weekDay: weekDay, switchIsActive: switchIsActive)
+        
+        return cell
+    }
+}
+
+//MARK: - UITableViewDelegate
+extension SelectSheduleViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+}
+
+//MARK: - SheduleTableCellDelegate
+extension SelectSheduleViewController: SheduleTableCellDelegate {
+    func addDay(nameOfDay: WeekDay) {
+        selectedDays.append(nameOfDay)
+    }
+    
+    func removeDay(nameOfDay: WeekDay) {
+        guard let index = selectedDays.firstIndex(of: nameOfDay) else { return }
+        selectedDays.remove(at: index)
+    }
+}
+
 //MARK: - Private functions
 private extension SelectSheduleViewController {
     func setUpView() {
@@ -114,46 +155,5 @@ private extension SelectSheduleViewController {
         guard let delegate = delegate else { return }
         delegate.updateShedule(shedule: selectedDays)
         dismiss(animated: true)
-    }
-}
-
-//MARK: - UITableViewDataSource
-extension SelectSheduleViewController: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return WeekDay.allCases.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = sheduleTableView.dequeueReusableCell(
-            withIdentifier: "sheduleTableCell",
-            for: indexPath
-        ) as? SheduleTableViewCell else {
-            return UITableViewCell()
-        }
-        cell.delegate = self
-        let weekDay = allDays[indexPath.row]
-        let switchIsActive = selectedDays.contains(weekDay) ? true : false
-        cell.configureCell(weekDay: weekDay, switchIsActive: switchIsActive)
-        
-        return cell
-    }
-}
-
-//MARK: - UITableViewDelegate
-extension SelectSheduleViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-    }
-}
-
-//MARK: - SheduleTableCellDelegate
-extension SelectSheduleViewController: SheduleTableCellDelegate {
-    func addDay(nameOfDay: WeekDay) {
-        selectedDays.append(nameOfDay)
-    }
-    
-    func removeDay(nameOfDay: WeekDay) {
-        guard let index = selectedDays.firstIndex(of: nameOfDay) else { return }
-        selectedDays.remove(at: index)
     }
 }

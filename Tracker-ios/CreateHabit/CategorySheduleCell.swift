@@ -41,7 +41,7 @@ final class CategorySheduleCell: UITableViewCell {
     private lazy var stackView: UIStackView = {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
-    
+        
         stackView.axis = .vertical
         stackView.distribution = .fill
         stackView.alignment = .leading

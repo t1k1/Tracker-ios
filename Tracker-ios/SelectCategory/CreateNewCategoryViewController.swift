@@ -13,7 +13,7 @@ final class CreateNewCategoryViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
-        label.text = "Новая каегория"
+        label.text = "Новая категория"
         label.font = .systemFont(ofSize: 16, weight: .medium)
         label.textColor = UIColor.ypBlack
         
@@ -24,7 +24,7 @@ final class CreateNewCategoryViewController: UIViewController {
         textField.translatesAutoresizingMaskIntoConstraints = false
         
         textField.setLeftPaddingPoints(10)
-        textField.placeholder = "Введите название ктегории"
+        textField.placeholder = "Введите название категории"
         textField.backgroundColor = UIColor.ypBackground
         textField.layer.cornerRadius = 16
         textField.delegate = self

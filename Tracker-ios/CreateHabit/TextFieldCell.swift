@@ -8,6 +8,9 @@
 import UIKit
 
 final class TextFieldCell: UITableViewCell {
+    //MARK: - Public variables
+    weak var delegate: TextFieldDelegate?
+    
     //MARK: - Layout variables
     private lazy var nameHabitTextField: UITextField = {
         let textField = UITextField()
@@ -19,33 +22,12 @@ final class TextFieldCell: UITableViewCell {
         return textField
     }()
     
-    //MARK: - Delegate
-    weak var delegate: TextFieldDelegate?
-    
     //MARK: - Main function
     func configureCell() {
         contentView.backgroundColor = UIColor.ypBackground
         
         addSubViews()
         configureConstraints()
-    }
-}
-
-//MARK: - Private functions
-private extension TextFieldCell {
-    func addSubViews() {
-        contentView.backgroundColor = UIColor.ypBackground
-        
-        contentView.addSubview(nameHabitTextField)
-    }
-    
-    func configureConstraints() {
-        NSLayoutConstraint.activate([
-            nameHabitTextField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
-            nameHabitTextField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            nameHabitTextField.topAnchor.constraint(equalTo: contentView.topAnchor),
-            nameHabitTextField.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
-        ])
     }
 }
 
@@ -67,5 +49,23 @@ extension TextFieldCell: UITextFieldDelegate {
         delegate?.updateHabitName(with: textField.text)
         
         return true
+    }
+}
+
+//MARK: - Private functions
+private extension TextFieldCell {
+    func addSubViews() {
+        contentView.backgroundColor = UIColor.ypBackground
+        
+        contentView.addSubview(nameHabitTextField)
+    }
+    
+    func configureConstraints() {
+        NSLayoutConstraint.activate([
+            nameHabitTextField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
+            nameHabitTextField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            nameHabitTextField.topAnchor.constraint(equalTo: contentView.topAnchor),
+            nameHabitTextField.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+        ])
     }
 }

@@ -8,6 +8,9 @@
 import UIKit
 
 final class AddNewTrackerViewController: UIViewController {
+    //MARK: - Public variables
+    weak var delegate: TrackerViewControllerDelegate?
+    
     //MARK: - Layout variables
     private lazy var headerLabel: UILabel = {
         let label = UILabel()
@@ -41,9 +44,6 @@ final class AddNewTrackerViewController: UIViewController {
         
         return button
     }()
-    
-    //MARK: - Delegate
-    weak var delegate: TrackerViewControllerDelegate?
     
     //MARK: - Lyfecycle
     override func viewDidLoad() {

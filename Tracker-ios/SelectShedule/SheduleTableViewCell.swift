@@ -8,6 +8,9 @@
 import UIKit
 
 final class SheduleTableViewCell: UITableViewCell {
+    //MARK: - Public functions
+    weak var delegate: SheduleTableCellDelegate?
+    
     //MARK: - Layout variables
     private lazy var nameLabel: UILabel = {
         let label = UILabel()
@@ -28,9 +31,6 @@ final class SheduleTableViewCell: UITableViewCell {
         
         return switcherView
     }()
-    
-    //MARK: - Delegate
-    weak var delegate: SheduleTableCellDelegate?
     
     //MARK: - Private variables
     private var weekDay: WeekDay?

@@ -22,6 +22,9 @@ protocol TextFieldDelegate: AnyObject {
 
 //MARK: - CreateHabitViewController
 final class CreateHabitViewController: UIViewController {
+    //MARK: - Public variables
+    weak var delegate: TrackerViewControllerDelegate?
+    
     //MARK: - Layout variables
     private lazy var headerLabel: UILabel = {
         let label = UILabel()
@@ -71,14 +74,11 @@ final class CreateHabitViewController: UIViewController {
         return button
     }()
     
-    //MARK: - Delegate
-    weak var delegate: TrackerViewControllerDelegate?
-    
     //MARK: - Private variables
     private var category: TrackerCategory?
     private var sheduleArr: [WeekDay]?
     private var habitName: String?
-    private struct const {
+    private struct Сonst {
         static let tableCellNames = [["textField"],["category","shedule"]]
     }
     
@@ -90,6 +90,88 @@ final class CreateHabitViewController: UIViewController {
     }
 }
 
+//MARK: - UITableViewDelegate
+extension CreateHabitViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        selectCell(indexPath: indexPath)
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+}
+
+//MARK: - UITableViewDataSource
+extension CreateHabitViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return Сonst.tableCellNames[section].count
+    }
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return Сonst.tableCellNames.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        if indexPath.section == 0 {
+            guard let cell = tableView.dequeueReusableCell(
+                withIdentifier: "textFieldCell",
+                for: indexPath
+            ) as? TextFieldCell else {
+                return UITableViewCell()
+            }
+            cell.delegate = self
+            cell.configureCell()
+            
+            return cell
+        } else {
+            var text = ""
+            var description: String? = nil
+            
+            guard let cell = tableView.dequeueReusableCell(
+                withIdentifier: "categorySheduleCell",
+                for: indexPath
+            ) as? CategorySheduleCell else {
+                return UITableViewCell()
+            }
+            if indexPath.row == 0 {
+                text = "Категория"
+                description = category?.header
+            } else {
+                text = "Расписание"
+                description = stringFromSheduleArr()
+            }
+            
+            cell.configureCell(text: text, description: description)
+            
+            return cell
+        }
+    }
+}
+
+//MARK: - CreateHabitDelegate
+extension CreateHabitViewController: CreateHabitDelegate {
+    func updateCategory(category: TrackerCategory) {
+        self.category = category
+        changeCreateButton()
+        tableView.reloadData()
+    }
+}
+
+//MARK: - SelectSheduleDelegate
+extension CreateHabitViewController: SelectSheduleDelegate {
+    func updateShedule(shedule: [WeekDay]) {
+        self.sheduleArr = shedule
+        changeCreateButton()
+        tableView.reloadData()
+    }
+}
+
+//MARK: - TextFieldDelegate
+extension CreateHabitViewController: TextFieldDelegate {
+    func updateHabitName(with name: String?) {
+        self.habitName = name
+        changeCreateButton()
+    }
+}
+
+//MARK: - Private functions
 private extension CreateHabitViewController {
     //MARK: - Configurating functions
     func setUpView() {
@@ -182,6 +264,19 @@ private extension CreateHabitViewController {
         }
     }
     
+    func stringFromSheduleArr() -> String? {
+        guard let arr = sheduleArr else { return nil }
+        
+        var stringResult = ""
+        if arr.count == 7 {
+            stringResult = "Каждый день"
+        } else {
+            let filter = arr.map { $0.shortDayName }
+            stringResult = filter.joined(separator: ", ")
+        }
+        return stringResult
+    }
+    
     //MARK: - Buttons functions
     @objc
     func create() {
@@ -204,99 +299,5 @@ private extension CreateHabitViewController {
     @objc
     func cancel() {
         dismiss(animated: true)
-    }
-}
-
-//MARK: - UITableViewDelegate
-extension CreateHabitViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        selectCell(indexPath: indexPath)
-        tableView.deselectRow(at: indexPath, animated: true)
-    }
-}
-
-//MARK: - UITableViewDataSource
-extension CreateHabitViewController: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return const.tableCellNames[section].count
-    }
-    
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return const.tableCellNames.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if indexPath.section == 0 {
-            guard let cell = tableView.dequeueReusableCell(
-                withIdentifier: "textFieldCell",
-                for: indexPath
-            ) as? TextFieldCell else {
-                return UITableViewCell()
-            }
-            cell.delegate = self
-            cell.configureCell()
-            
-            return cell
-        } else {
-            var text = ""
-            var description: String? = nil
-            
-            guard let cell = tableView.dequeueReusableCell(
-                withIdentifier: "categorySheduleCell",
-                for: indexPath
-            ) as? CategorySheduleCell else {
-                return UITableViewCell()
-            }
-            if indexPath.row == 0 {
-                text = "Категория"
-                description = category?.header
-            } else {
-                text = "Расписание"
-                description = stringFromSheduleArr()
-            }
-            
-            cell.configureCell(text: text, description: description)
-            
-            return cell
-        }
-    }
-    
-    func stringFromSheduleArr() -> String? {
-        guard let arr = sheduleArr else { return nil }
-        
-        var stringResult = ""
-        if arr.count == 7 {
-            stringResult = "Каждый день"
-        } else {
-            let filter = arr.map { $0.shortDayName }
-            stringResult = filter.joined(separator: ", ")
-        }
-        return stringResult
-    }
-}
-
-//MARK: - CreateHabitDelegate
-extension CreateHabitViewController: CreateHabitDelegate {
-    func updateCategory(category: TrackerCategory) {
-        self.category = category
-        changeCreateButton()
-        tableView.reloadData()
-    }
-}
-
-//MARK: - SelectSheduleDelegate
-extension CreateHabitViewController: SelectSheduleDelegate {
-    func updateShedule(shedule: [WeekDay]) {
-        self.sheduleArr = shedule
-        changeCreateButton()
-        tableView.reloadData()
-    }
-}
-
-//MARK: - TextFieldDelegate
-extension CreateHabitViewController: TextFieldDelegate {
-    func updateHabitName(with name: String?) {
-        self.habitName = name
-        changeCreateButton()
     }
 }

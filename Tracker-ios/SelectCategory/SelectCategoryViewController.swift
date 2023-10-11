@@ -13,6 +13,9 @@ protocol CreateNewCategoryDelegate: AnyObject {
 }
 
 final class SelectCategoryViewController: UIViewController {
+    //MARK: - Public functions
+    weak var delegate: CreateHabitDelegate?
+    
     //MARK: - Layout variables
     private lazy var headerLabel: UILabel = {
         let label = UILabel()
@@ -72,9 +75,6 @@ final class SelectCategoryViewController: UIViewController {
         return tableView
     }()
     
-    //MARK: - Delegate
-    weak var delegate: CreateHabitDelegate?
-    
     //MARK: - Private variables
     private var mockData = MockData.shared
     
@@ -83,6 +83,51 @@ final class SelectCategoryViewController: UIViewController {
         super.viewDidLoad()
         
         setUpView()
+    }
+}
+
+//MARK: - CreateNewCategoryDelegate
+extension SelectCategoryViewController: CreateNewCategoryDelegate {
+    func createNewCategory(category: String) {
+        
+        MockData.shared.addCategory(categoryName: category, trackers: [])
+        categoryTableView.reloadData()
+    }
+}
+
+//MARK: - UITableViewDataSource
+extension SelectCategoryViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return mockData.getCategories().count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let header = mockData.getCategories()[indexPath.row].header
+        
+        guard let cell = categoryTableView.dequeueReusableCell(
+            withIdentifier: "categoryTableCell",
+            for: indexPath
+        ) as? CategoryTableViewCell else {
+            return UITableViewCell()
+        }
+        
+        cell.configureCell(text: header)
+        
+        return cell
+    }
+    
+}
+
+//MARK: - UITableViewDelegate
+extension SelectCategoryViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let delegate = delegate else {
+            tableView.deselectRow(at: indexPath, animated: false)
+            return
+        }
+        delegate.updateCategory(category: mockData.getCategories()[indexPath.row])
+        tableView.deselectRow(at: indexPath, animated: false)
+        dismiss(animated: true)
     }
 }
 
@@ -150,50 +195,5 @@ private extension SelectCategoryViewController {
         let navigatonViewController = UINavigationController(rootViewController: createNewCategoryViewController)
         
         present(navigatonViewController, animated: true)
-    }
-}
-
-//MARK: - CreateNewCategoryDelegate
-extension SelectCategoryViewController: CreateNewCategoryDelegate {
-    func createNewCategory(category: String) {
-        
-        MockData.shared.addCategory(categoryName: category, trackers: [])
-        categoryTableView.reloadData()
-    }
-}
-
-//MARK: - UITableViewDataSource
-extension SelectCategoryViewController: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return mockData.getCategories().count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let header = mockData.getCategories()[indexPath.row].header
-        
-        guard let cell = categoryTableView.dequeueReusableCell(
-            withIdentifier: "categoryTableCell",
-            for: indexPath
-        ) as? CategoryTableViewCell else {
-            return UITableViewCell()
-        }
-        
-        cell.configureCell(text: header)
-        
-        return cell
-    }
-    
-}
-
-//MARK: - UITableViewDelegate
-extension SelectCategoryViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let delegate = delegate else {
-            tableView.deselectRow(at: indexPath, animated: false)
-            return
-        }
-        delegate.updateCategory(category: mockData.getCategories()[indexPath.row])
-        tableView.deselectRow(at: indexPath, animated: false)
-        dismiss(animated: true)
     }
 }

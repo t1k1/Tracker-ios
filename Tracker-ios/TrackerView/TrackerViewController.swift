@@ -147,6 +147,136 @@ class TrackerViewController: UIViewController {
     }
 }
 
+//MARK: - UITextFieldDelegate
+extension TrackerViewController: UITextFieldDelegate {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        if let text = textField.text,
+           let textRange = Range(range, in: text) {
+            
+            let updatedText = text.replacingCharacters(in: textRange, with: string)
+            if updatedText == "" {
+                showFilteredTrackersByDay()
+            } else {
+                showFilteredTrackersByText(updatedText)
+            }
+        }
+        return true;
+    }
+
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        cancelSearchButton.isHidden = true
+        return true
+    }
+
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        cancelSearchButton.isHidden = false
+    }
+}
+
+//MARK: - TrackerViewControllerDelegate
+extension TrackerViewController: TrackerViewControllerDelegate {
+    func addNewTracker(category: TrackerCategory, sheduleArr: [WeekDay], habitName: String) {
+        mockData.addTrackerInCategory(
+            category: category,
+            tracker: Tracker(
+                id: UInt(mockData.getCategories().count + 1),
+                name: habitName,
+                color: .ypRed,
+                emoji: "",
+                shedule: sheduleArr
+            )
+        )
+        
+        updateCategories()
+        collectionView.reloadData()
+        changeVisibility()
+    }
+}
+
+// MARK: - UICollectionViewDataSource
+extension TrackerViewController: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return visibleCategories[section].trackers.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "trackerCell", for: indexPath) as? TrackerCollectionViewCell
+        guard let cell = cell else { return UICollectionViewCell() }
+        
+        cell.delegate = self
+        let tracker = visibleCategories[indexPath.section].trackers[indexPath.row]
+        cell.configureCell(
+            tracker: tracker,
+            isCompleted: isTrackerComleted(tracker.id),
+            daysCount: getComletedCount(id: tracker.id),
+            indexPath: indexPath,
+            selectedDate: datePicker.date
+        )
+        
+        return cell
+    }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        viewForSupplementaryElementOfKind kind: String,
+        at indexPath: IndexPath
+    ) -> UICollectionReusableView {
+        
+        guard let header = collectionView.dequeueReusableSupplementaryView(
+            ofKind: kind,
+            withReuseIdentifier: "headerCell",
+            for: indexPath
+        ) as? TrackerHeaderColletcionviewCell else {
+            return UICollectionReusableView()
+        }
+        header.configureCell(header: visibleCategories[indexPath.section].header)
+        
+        return header
+    }
+}
+
+// MARK: - UICollectionViewDelegate
+extension TrackerViewController: UICollectionViewDelegate{
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return visibleCategories.count
+    }
+}
+
+// MARK: - UICollectionViewDelegateFlowLayout
+extension TrackerViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
+        return CGSize(width: collectionView.bounds.width / 2.2, height: 132)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        let width = collectionView.frame.width
+        return CGSize(width: width, height: 30)
+    }
+}
+
+// MARK: - TrackerCellDelegate
+extension TrackerViewController: TrackerCellDelegate {
+    func updateTrackerRecord(id: UInt, isCompleted: Bool, indexPath: IndexPath) {
+        if isCompleted {
+            let trackerRecord = TrackerRecord(id: id, date: datePicker.date)
+            completedTrackers.append(trackerRecord)
+            collectionView.reloadItems(at: [indexPath])
+        } else {
+            completedTrackers.removeAll { tracker in
+                let day = Calendar.current.isDate(tracker.date, inSameDayAs: datePicker.date)
+                return tracker.id == id && day
+            }
+            collectionView.reloadItems(at: [indexPath])
+        }
+    }
+}
+
 private extension TrackerViewController {
     //MARK: - Configurating functions
     func setUpView() {
@@ -339,135 +469,5 @@ private extension TrackerViewController {
             }
         }
         return result
-    }
-}
-
-//MARK: - UITextFieldDelegate
-extension TrackerViewController: UITextFieldDelegate {
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        if let text = textField.text,
-           let textRange = Range(range, in: text) {
-            
-            let updatedText = text.replacingCharacters(in: textRange, with: string)
-            if updatedText == "" {
-                showFilteredTrackersByDay()
-            } else {
-                showFilteredTrackersByText(updatedText)
-            }
-        }
-        return true;
-    }
-
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
-        cancelSearchButton.isHidden = true
-        return true
-    }
-
-    func textFieldDidBeginEditing(_ textField: UITextField) {
-        cancelSearchButton.isHidden = false
-    }
-}
-
-//MARK: - TrackerViewControllerDelegate
-extension TrackerViewController: TrackerViewControllerDelegate {
-    func addNewTracker(category: TrackerCategory, sheduleArr: [WeekDay], habitName: String) {
-        mockData.addTrackerInCategory(
-            category: category,
-            tracker: Tracker(
-                id: UInt(mockData.getCategories().count + 1),
-                name: habitName,
-                color: .ypRed,
-                emoji: "",
-                shedule: sheduleArr
-            )
-        )
-        
-        updateCategories()
-        collectionView.reloadData()
-        changeVisibility()
-    }
-}
-
-// MARK: - UICollectionViewDataSource
-extension TrackerViewController: UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return visibleCategories[section].trackers.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "trackerCell", for: indexPath) as? TrackerCollectionViewCell
-        guard let cell = cell else { return UICollectionViewCell() }
-        
-        cell.delegate = self
-        let tracker = visibleCategories[indexPath.section].trackers[indexPath.row]
-        cell.configureCell(
-            tracker: tracker,
-            isCompleted: isTrackerComleted(tracker.id),
-            daysCount: getComletedCount(id: tracker.id),
-            indexPath: indexPath,
-            selectedDate: datePicker.date
-        )
-        
-        return cell
-    }
-    
-    func collectionView(
-        _ collectionView: UICollectionView,
-        viewForSupplementaryElementOfKind kind: String,
-        at indexPath: IndexPath
-    ) -> UICollectionReusableView {
-        
-        guard let header = collectionView.dequeueReusableSupplementaryView(
-            ofKind: kind,
-            withReuseIdentifier: "headerCell",
-            for: indexPath
-        ) as? TrackerHeaderColletcionviewCell else {
-            return UICollectionReusableView()
-        }
-        header.configureCell(header: visibleCategories[indexPath.section].header)
-        
-        return header
-    }
-}
-
-// MARK: - UICollectionViewDelegate
-extension TrackerViewController: UICollectionViewDelegate{
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return visibleCategories.count
-    }
-}
-
-// MARK: - UICollectionViewDelegateFlowLayout
-extension TrackerViewController: UICollectionViewDelegateFlowLayout {
-    func collectionView(
-        _ collectionView: UICollectionView,
-        layout collectionViewLayout: UICollectionViewLayout,
-        sizeForItemAt indexPath: IndexPath
-    ) -> CGSize {
-        return CGSize(width: collectionView.bounds.width / 2.2, height: 132)
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        let width = collectionView.frame.width
-        return CGSize(width: width, height: 30)
-    }
-}
-
-// MARK: - TrackerCellDelegate
-extension TrackerViewController: TrackerCellDelegate {
-    func updateTrackerRecord(id: UInt, isCompleted: Bool, indexPath: IndexPath) {
-        if isCompleted {
-            let trackerRecord = TrackerRecord(id: id, date: datePicker.date)
-            completedTrackers.append(trackerRecord)
-            collectionView.reloadItems(at: [indexPath])
-        } else {
-            completedTrackers.removeAll { tracker in
-                let day = Calendar.current.isDate(tracker.date, inSameDayAs: datePicker.date)
-                return tracker.id == id && day
-            }
-            collectionView.reloadItems(at: [indexPath])
-        }
     }
 }

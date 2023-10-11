@@ -36,8 +36,9 @@ final class SheduleTableViewCell: UITableViewCell {
     private var weekDay: WeekDay?
     
     //MARK: - Main function
-    func configureCell(weekDay: WeekDay) {
+    func configureCell(weekDay: WeekDay, switchIsActive: Bool) {
         nameLabel.text = weekDay.dayName
+        switcherView.isOn = switchIsActive
         self.weekDay = weekDay
         
         addSubViews()

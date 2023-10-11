@@ -14,6 +14,10 @@ protocol SheduleTableCellDelegate: AnyObject {
 }
 
 final class SelectSheduleViewController: UIViewController {
+    //MARK: - Public variables
+    weak var delegate: SelectSheduleDelegate?
+    var currentShedule: [WeekDay]?
+    
     //MARK: - Layout variables
     private lazy var headerLabel: UILabel = {
         let label = UILabel()
@@ -50,9 +54,6 @@ final class SelectSheduleViewController: UIViewController {
         return tableView
     }()
     
-    //MARK: - Delegate
-    weak var delegate: SelectSheduleDelegate?
-    
     //MARK: - Private variables
     private var allDays = WeekDay.allCases
     private var selectedDays: [WeekDay] = []
@@ -76,6 +77,10 @@ private extension SelectSheduleViewController {
     }
     
     func configureTableView() {
+        if let currentShedule = currentShedule {
+            selectedDays = currentShedule
+        }
+        
         sheduleTableView.register(SheduleTableViewCell.self, forCellReuseIdentifier: "sheduleTableCell")
     }
     
@@ -126,7 +131,9 @@ extension SelectSheduleViewController: UITableViewDataSource {
             return UITableViewCell()
         }
         cell.delegate = self
-        cell.configureCell(weekDay: allDays[indexPath.row])
+        let weekDay = allDays[indexPath.row]
+        let switchIsActive = selectedDays.contains(weekDay) ? true : false
+        cell.configureCell(weekDay: weekDay, switchIsActive: switchIsActive)
         
         return cell
     }

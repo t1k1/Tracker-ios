@@ -157,23 +157,10 @@ private extension CreateHabitViewController {
             viewController.delegate = self
         } else if let viewController = viewController as? SelectSheduleViewController {
             viewController.delegate = self
+            viewController.currentShedule = sheduleArr
         }
         
         let navigatonViewController = UINavigationController(rootViewController: viewController)
-        present(navigatonViewController, animated: true)
-    }
-    
-    func presentSelectCategory() {
-        let selectCategoryViewController = SelectCategoryViewController()
-        selectCategoryViewController.delegate = self
-        let navigatonViewController = UINavigationController(rootViewController: selectCategoryViewController)
-        present(navigatonViewController, animated: true)
-    }
-    
-    func presentSelectShedule() {
-        let selectSheduleViewController = SelectSheduleViewController()
-        selectSheduleViewController.delegate = self
-        let navigatonViewController = UINavigationController(rootViewController: selectSheduleViewController)
         present(navigatonViewController, animated: true)
     }
     

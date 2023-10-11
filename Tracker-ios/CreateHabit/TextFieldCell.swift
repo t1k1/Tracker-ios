@@ -15,6 +15,9 @@ final class TextFieldCell: UITableViewCell {
     private lazy var nameHabitTextField: UITextField = {
         let textField = UITextField()
         textField.translatesAutoresizingMaskIntoConstraints = false
+        
+        textField.autocorrectionType = UITextAutocorrectionType.no
+        textField.returnKeyType = UIReturnKeyType.done
         textField.placeholder = "Введите название трекера"
         textField.layer.cornerRadius = 16
         textField.delegate = self
@@ -33,20 +36,23 @@ final class TextFieldCell: UITableViewCell {
 
 //MARK: - UITextFieldDelegate
 extension TextFieldCell: UITextFieldDelegate {
-    func textField(
-        _ textField: UITextField,
-        shouldChangeCharactersIn range: NSRange,
-        replacementString string: String
-    ) -> Bool {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         let maxLength = 38
         let currentString: NSString? = textField.text as? NSString
         guard let currentString = currentString else { return true }
         let newString: NSString = currentString.replacingCharacters(in: range, with: string) as NSString
-        return newString.length <= maxLength
+        
+        let isAcceptableLength = newString.length <= maxLength
+        
+        if isAcceptableLength {
+            delegate?.updateHabitName(with: newString as String)
+        }
+        
+        return isAcceptableLength
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        delegate?.updateHabitName(with: textField.text)
+        textField.resignFirstResponder()
         
         return true
     }

@@ -30,7 +30,7 @@ final class CreateHabitViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
-        label.text = "Создание трекера"
+        label.text = "Новая привычка"
         label.font = .systemFont(ofSize: 16, weight: .medium)
         label.textColor = UIColor.ypBlack
         
@@ -166,7 +166,11 @@ extension CreateHabitViewController: SelectSheduleDelegate {
 //MARK: - TextFieldDelegate
 extension CreateHabitViewController: TextFieldDelegate {
     func updateHabitName(with name: String?) {
-        self.habitName = name
+        if name == "" {
+            self.habitName = nil
+        } else {
+            self.habitName = name
+        }
         changeCreateButton()
     }
 }

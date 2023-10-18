@@ -28,6 +28,7 @@ final class TextFieldCell: UITableViewCell {
     //MARK: - Main function
     func configureCell() {
         contentView.backgroundColor = UIColor.ypBackground
+        selectionStyle = .none
         
         addSubViews()
         configureConstraints()

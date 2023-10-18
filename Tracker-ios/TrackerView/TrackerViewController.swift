@@ -9,7 +9,13 @@ import UIKit
 
 //MARK: - Protocols
 protocol TrackerViewControllerDelegate: AnyObject {
-    func addNewTracker(category: TrackerCategory, sheduleArr: [WeekDay], habitName: String)
+    func addNewTracker(
+        category: TrackerCategory,
+        sheduleArr: [WeekDay],
+        habitName: String,
+        emoji: String,
+        color: UIColor
+    )
 }
 protocol TrackerCellDelegate: AnyObject {
     func updateTrackerRecord(id: UInt, isCompleted: Bool, indexPath: IndexPath)
@@ -176,14 +182,20 @@ extension TrackerViewController: UITextFieldDelegate {
 
 //MARK: - TrackerViewControllerDelegate
 extension TrackerViewController: TrackerViewControllerDelegate {
-    func addNewTracker(category: TrackerCategory, sheduleArr: [WeekDay], habitName: String) {
+    func addNewTracker(
+        category: TrackerCategory,
+        sheduleArr: [WeekDay],
+        habitName: String,
+        emoji: String,
+        color: UIColor
+    ) {
         mockData.addTrackerInCategory(
             category: category,
             tracker: Tracker(
                 id: UInt(mockData.getCategories().count + 1),
                 name: habitName,
-                color: .ypRed,
-                emoji: "",
+                color: color,
+                emoji: emoji,
                 shedule: sheduleArr
             )
         )

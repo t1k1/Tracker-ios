@@ -18,7 +18,7 @@ protocol TrackerViewControllerDelegate: AnyObject {
     )
 }
 protocol TrackerCellDelegate: AnyObject {
-    func updateTrackerRecord(id: UInt, isCompleted: Bool, indexPath: IndexPath)
+    func updateTrackerRecord(id: UUID, isCompleted: Bool, indexPath: IndexPath)
 }
 
 //MARK: - TrackerViewController
@@ -192,7 +192,7 @@ extension TrackerViewController: TrackerViewControllerDelegate {
         mockData.addTrackerInCategory(
             category: category,
             tracker: Tracker(
-                id: UInt(mockData.getCategories().count + 1),
+                id: UUID(),
                 name: habitName,
                 color: color,
                 emoji: emoji,
@@ -274,7 +274,7 @@ extension TrackerViewController: UICollectionViewDelegateFlowLayout {
 
 // MARK: - TrackerCellDelegate
 extension TrackerViewController: TrackerCellDelegate {
-    func updateTrackerRecord(id: UInt, isCompleted: Bool, indexPath: IndexPath) {
+    func updateTrackerRecord(id: UUID, isCompleted: Bool, indexPath: IndexPath) {
         if isCompleted {
             let trackerRecord = TrackerRecord(id: id, date: datePicker.date)
             completedTrackers.append(trackerRecord)
@@ -463,7 +463,7 @@ private extension TrackerViewController {
         showFilteredTrackersByDay()
     }
     
-    func isTrackerComleted(_ id: UInt) -> Bool {
+    func isTrackerComleted(_ id: UUID) -> Bool {
         let calendar = Calendar.current
         return completedTrackers.contains { tracker in
             let date = calendar.isDate( tracker.date, inSameDayAs: datePicker.date)
@@ -472,7 +472,7 @@ private extension TrackerViewController {
         }
     }
     
-    func getComletedCount(id: UInt) -> Int {
+    func getComletedCount(id: UUID) -> Int {
         var result: Int = 0
         
         completedTrackers.forEach { trackerRecord in

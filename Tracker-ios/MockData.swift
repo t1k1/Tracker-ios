@@ -15,7 +15,7 @@ final class MockData {
             header: "Стандартная категория",
             trackers: [
                 Tracker(
-                    id: 1,
+                    id: UUID(),
                     name: "Стандартный трекер",
                     color: .ypRed,
                     emoji: "🍒",

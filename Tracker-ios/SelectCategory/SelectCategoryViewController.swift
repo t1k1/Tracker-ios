@@ -76,7 +76,7 @@ final class SelectCategoryViewController: UIViewController {
     }()
     
     //MARK: - Private variables
-    private var mockData = MockData.shared
+    private let categoryStore = TrackerCategoryStore.shared
     
     //MARK: - Lyfecycle
     override func viewDidLoad() {
@@ -90,7 +90,7 @@ final class SelectCategoryViewController: UIViewController {
 extension SelectCategoryViewController: CreateNewCategoryDelegate {
     func createNewCategory(category: String) {
         
-        MockData.shared.addCategory(categoryName: category, trackers: [])
+        try? categoryStore.addNewTrackerCategory(trackerCategory: TrackerCategory(header: category, trackers: []))
         categoryTableView.reloadData()
     }
 }
@@ -98,11 +98,11 @@ extension SelectCategoryViewController: CreateNewCategoryDelegate {
 //MARK: - UITableViewDataSource
 extension SelectCategoryViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return mockData.getCategories().count
+        return categoryStore.trackerCategories.count//mockData.getCategories().count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let header = mockData.getCategories()[indexPath.row].header
+        let header = categoryStore.trackerCategories[indexPath.row].header//mockData.getCategories()[indexPath.row].header
         
         guard let cell = categoryTableView.dequeueReusableCell(
             withIdentifier: "categoryTableCell",
@@ -125,7 +125,7 @@ extension SelectCategoryViewController: UITableViewDelegate {
             tableView.deselectRow(at: indexPath, animated: false)
             return
         }
-        delegate.updateCategory(category: mockData.getCategories()[indexPath.row])
+        delegate.updateCategory(category: categoryStore.trackerCategories[indexPath.row])
         tableView.deselectRow(at: indexPath, animated: false)
         dismiss(animated: true)
     }
@@ -135,7 +135,7 @@ extension SelectCategoryViewController: UITableViewDelegate {
 private extension SelectCategoryViewController {
     func setUpView() {
         view.backgroundColor = UIColor.ypWhite
-        if mockData.getCategories().count > 0 {
+        if categoryStore.trackerCategories.count > 0 {
             categoryTableView.isHidden = false
             centerLabel.isHidden = true
             centerImageView.isHidden = true

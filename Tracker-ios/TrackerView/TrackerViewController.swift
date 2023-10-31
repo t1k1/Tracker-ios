@@ -138,16 +138,18 @@ class TrackerViewController: UIViewController {
     }()
     
     //MARK: - Private variables
-    private let mockData = MockData.shared
+    private let categoryStore = TrackerCategoryStore.shared
+    private let recordStore = TrackerRecordStore.shared
     private var categories: [TrackerCategory] = []
     private var completedTrackers: [TrackerRecord] = []
     private var visibleCategories: [TrackerCategory] = []
     private var currentDate: Date?
-    
+   
     //MARK: - Lyfecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        categoryStore.delegate = self
         updateCategories()
         setUpView()
     }
@@ -180,6 +182,16 @@ extension TrackerViewController: UITextFieldDelegate {
     }
 }
 
+//MARK: - TrackerCategoryStoreDelegate
+extension TrackerViewController: TrackerCategoryStoreDelegate {
+    func store(_ store: TrackerCategoryStore, didUpdate update: TrackerStoreUpdate) {
+        visibleCategories = categoryStore.trackerCategories
+        updateCategories()
+        //TODO: Добавить фильтрацию
+        collectionView.reloadData()
+    }
+}
+
 //MARK: - TrackerViewControllerDelegate
 extension TrackerViewController: TrackerViewControllerDelegate {
     func addNewTracker(
@@ -189,16 +201,34 @@ extension TrackerViewController: TrackerViewControllerDelegate {
         emoji: String,
         color: UIColor
     ) {
-        mockData.addTrackerInCategory(
-            category: category,
-            tracker: Tracker(
-                id: UUID(),
-                name: habitName,
-                color: color,
-                emoji: emoji,
-                shedule: sheduleArr
-            )
+        var foundedCategory: TrackerCategory? = nil
+        let categories: [TrackerCategory] = categoryStore.trackerCategories
+        let newTracker = Tracker(
+            id: UUID(),
+            name: habitName,
+            color: color,
+            emoji: emoji,
+            shedule: sheduleArr
         )
+        
+        categories.forEach { curCategory in
+            if curCategory.header == category.header { foundedCategory = curCategory }
+        }
+        
+        if let foundedCategory = foundedCategory {
+            try? categoryStore.addNewTracker(
+                newTracker,
+                toCategory: foundedCategory
+            )
+        } else {
+            let newCategory = TrackerCategory(
+                header: category.header,
+                trackers: [newTracker]
+            )
+            try? categoryStore.addNewTrackerCategory(trackerCategory: newCategory)
+        }
+        
+        dismiss(animated: true)
         
         updateCategories()
         collectionView.reloadData()
@@ -277,13 +307,15 @@ extension TrackerViewController: TrackerCellDelegate {
     func updateTrackerRecord(id: UUID, isCompleted: Bool, indexPath: IndexPath) {
         if isCompleted {
             let trackerRecord = TrackerRecord(id: id, date: datePicker.date)
-            completedTrackers.append(trackerRecord)
+            //TODO: добавить трекер к выполненным
+//            completedTrackers.append(trackerRecord)
             collectionView.reloadItems(at: [indexPath])
         } else {
-            completedTrackers.removeAll { tracker in
-                let day = Calendar.current.isDate(tracker.date, inSameDayAs: datePicker.date)
-                return tracker.id == id && day
-            }
+            //TODO: удалить трекер из выполненных
+//            completedTrackers.removeAll { tracker in
+//                let day = Calendar.current.isDate(tracker.date, inSameDayAs: datePicker.date)
+//                return tracker.id == id && day
+//            }
             collectionView.reloadItems(at: [indexPath])
         }
     }
@@ -458,8 +490,9 @@ private extension TrackerViewController {
     }
     
     func updateCategories() {
-        categories = mockData.getCategories()
+        categories = categoryStore.trackerCategories
         visibleCategories = categories
+        completedTrackers = try! recordStore.fetchTrackerRecord()
         showFilteredTrackersByDay()
     }
     

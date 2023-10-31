@@ -8,11 +8,15 @@
 import Foundation
 import CoreData
 
+enum TrackerBaseError: Error {
+    case error
+}
+
 final class CoreDataStack {
     //MARK: - Public variables
     static let shared = CoreDataStack()
     
-    lazy var persistentContainer: NSPersistentContainer = {
+    private lazy var persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "TrackerBase")
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error as NSError? {
@@ -22,19 +26,20 @@ final class CoreDataStack {
         return container
     }()
     var context: NSManagedObjectContext {
-        persistentContainer.viewContext
+        return persistentContainer.viewContext
     }
     
     //MARK: - Initialization
     private init() {}
     
     //MARK: - Public functions
-    func contextSave(_ context: NSManagedObjectContext) {
+    func saveContext(_ context: NSManagedObjectContext) {
         if context.hasChanges {
             do {
                 try context.save()
             } catch {
-                assertionFailure("Не удалось сохранить контекст!")
+                print("Не удалось сохранить контекст!")
+                context.rollback()
             }
         }
     }

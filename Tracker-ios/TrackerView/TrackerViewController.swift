@@ -140,6 +140,7 @@ class TrackerViewController: UIViewController {
     //MARK: - Private variables
     private let categoryStore = TrackerCategoryStore.shared
     private let recordStore = TrackerRecordStore.shared
+    private let trackerStore = TrackerStore.shared
     private var categories: [TrackerCategory] = []
     private var completedTrackers: [TrackerRecord] = []
     private var visibleCategories: [TrackerCategory] = []
@@ -185,9 +186,7 @@ extension TrackerViewController: UITextFieldDelegate {
 //MARK: - TrackerCategoryStoreDelegate
 extension TrackerViewController: TrackerCategoryStoreDelegate {
     func store(_ store: TrackerCategoryStore, didUpdate update: TrackerStoreUpdate) {
-        visibleCategories = categoryStore.trackerCategories
         updateCategories()
-        //TODO: Добавить фильтрацию
         collectionView.reloadData()
     }
 }
@@ -201,8 +200,6 @@ extension TrackerViewController: TrackerViewControllerDelegate {
         emoji: String,
         color: UIColor
     ) {
-        var foundedCategory: TrackerCategory? = nil
-        let categories: [TrackerCategory] = categoryStore.trackerCategories
         let newTracker = Tracker(
             id: UUID(),
             name: habitName,
@@ -211,28 +208,13 @@ extension TrackerViewController: TrackerViewControllerDelegate {
             shedule: sheduleArr
         )
         
-        categories.forEach { curCategory in
-            if curCategory.header == category.header { foundedCategory = curCategory }
-        }
-        
-        if let foundedCategory = foundedCategory {
-            try? categoryStore.addNewTracker(
-                newTracker,
-                toCategory: foundedCategory
-            )
-        } else {
-            let newCategory = TrackerCategory(
-                header: category.header,
-                trackers: [newTracker]
-            )
-            try? categoryStore.addNewTrackerCategory(trackerCategory: newCategory)
-        }
-        
-        dismiss(animated: true)
+        try? trackerStore.addNewTracker(tracker: newTracker, category: category)
         
         updateCategories()
         collectionView.reloadData()
         changeVisibility()
+        
+        dismiss(animated: true)
     }
 }
 
@@ -305,19 +287,18 @@ extension TrackerViewController: UICollectionViewDelegateFlowLayout {
 // MARK: - TrackerCellDelegate
 extension TrackerViewController: TrackerCellDelegate {
     func updateTrackerRecord(id: UUID, isCompleted: Bool, indexPath: IndexPath) {
+        let trackerRecord = TrackerRecord(id: id, date: datePicker.date)
+        
         if isCompleted {
-            let trackerRecord = TrackerRecord(id: id, date: datePicker.date)
-            //TODO: добавить трекер к выполненным
-//            completedTrackers.append(trackerRecord)
-            collectionView.reloadItems(at: [indexPath])
+            try? recordStore.addTrackerRecord(trackerRecord)
         } else {
-            //TODO: удалить трекер из выполненных
-//            completedTrackers.removeAll { tracker in
-//                let day = Calendar.current.isDate(tracker.date, inSameDayAs: datePicker.date)
-//                return tracker.id == id && day
-//            }
-            collectionView.reloadItems(at: [indexPath])
+            try? recordStore.deleteRecordWith(id: trackerRecord.id, date: trackerRecord.date)
         }
+        
+        guard let completedTrackers = try? recordStore.fetchTrackerRecords() else { return }
+        self.completedTrackers = completedTrackers
+        
+        collectionView.reloadItems(at: [indexPath])
     }
 }
 
@@ -490,9 +471,12 @@ private extension TrackerViewController {
     }
     
     func updateCategories() {
-        categories = categoryStore.trackerCategories
-        visibleCategories = categories
-        completedTrackers = try! recordStore.fetchTrackerRecord()
+        guard let categories = try? categoryStore.fetchCategories() else { return }
+        self.categories = categories
+        self.visibleCategories = categories
+        
+        guard let completedTrackers = try? recordStore.fetchTrackerRecords() else { return }
+        self.completedTrackers = completedTrackers
         showFilteredTrackersByDay()
     }
     

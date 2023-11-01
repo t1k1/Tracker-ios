@@ -8,37 +8,34 @@
 import UIKit
 import CoreData
 
+//MARK: - Protocols
 protocol TrackerCategoryStoreDelegate: AnyObject {
     func store(_ categoryStore: TrackerCategoryStore, didUpdate update: TrackerStoreUpdate)
 }
 
+//MARK: - TrackerCategoryStore
 final class TrackerCategoryStore: NSObject {
+    //MARK: - Public variables
     static let shared = TrackerCategoryStore()
     weak var delegate: TrackerCategoryStoreDelegate?
-    var trackerCategories: [TrackerCategory] {
-        guard let objects = self.fetchedResultController.fetchedObjects,
-              let trackerCategories = try? objects.map({ try self.trackerCategory(from: $0) }) else {
-            return []
-        }
-        return trackerCategories
-    }
     
-    private let context = CoreDataStack.shared.context
-    private let trackerStore = TrackerStore()
-    private let daysValueTransformer = DaysValueTransformer()
+    //MARK: - Private variables
+    private let context: NSManagedObjectContext
+    private let daysValueTransformer = DaysValueTransformer.shared
     private var fetchedResultController: NSFetchedResultsController<TrackerCategoryCoreData>!
     private var insertedIndexes: IndexSet?
     private var deletedIndexes: IndexSet?
     private var updatedIndexes: IndexSet?
     private var movedIndexes: Set<TrackerStoreUpdate.Move>?
     
-    //TODO: Переписать инлициализацию на private init
+    //MARK: - Initialization
     convenience override init() {
         let context = CoreDataStack.shared.context
-        try! self.init(context: context)
+        self.init(context: context)
     }
     
-    init(context: NSManagedObjectContext) throws {
+    init(context: NSManagedObjectContext) {
+        self.context = context
         super.init()
         
         let fetchrequest = TrackerCategoryCoreData.fetchRequest()
@@ -53,98 +50,50 @@ final class TrackerCategoryStore: NSObject {
         )
         controller.delegate = self
         self.fetchedResultController = controller
-        try controller.performFetch()
+        try? controller.performFetch()
     }
     
-    func trackerCategory(from data: TrackerCategoryCoreData) throws -> TrackerCategory {
-        guard let header = data.header else { throw TrackerBaseError.error }
-        
-        let trackers: [Tracker] = try data.trackers?.compactMap({ tracker in
-            guard let trackerCoreData = (tracker as? TrackerCoreData),
-                  let id = trackerCoreData.id,
-                  let name = trackerCoreData.name,
-                  let color = trackerCoreData.color as? UIColor,
-                  let emoji = trackerCoreData.emoji else {
-                throw TrackerBaseError.error
-            }
-            let shedule: [WeekDay] = daysValueTransformer.reverseTransformedValue(trackerCoreData.shedule) as? [WeekDay] ?? []
-            return Tracker(id: id,
-                           name: name,
-                           color: color,
-                           emoji: emoji,
-                           shedule: shedule
-            )
-        }) ?? []
-        
-        return TrackerCategory(header: header, trackers: trackers)
+    //MARK: - Public functions
+    func fetchCategories() throws -> [TrackerCategory] {
+        guard let fetchedObjects = fetchedResultController.fetchedObjects,
+              let categories = try? fetchedObjects.map({
+                  try self.convertToTrackerCategory(data: $0)
+              }) else {
+            return []
+        }
+        return categories
     }
     
-    func addNewTrackerCategory(trackerCategory: TrackerCategory) throws {
-        let trackerCategoryCoreData = TrackerCategoryCoreData(context: context)
-        updateExistingTrackerCategory(trackerCategoryCoreData, with: trackerCategory)
+    func fetchCategoriesCoreData(categoryName: String) throws -> [TrackerCategoryCoreData] {
+        let fetchRequest = TrackerCategoryCoreData.fetchRequest()
+        fetchRequest.predicate = NSPredicate(
+            format: " %K == %@",
+            #keyPath(TrackerCategoryCoreData.header),
+            categoryName
+        )
+        return try context.fetch(fetchRequest)
+    }
+    
+    func addNewCategory(category: TrackerCategory) throws {
+        let categoryCoreData = TrackerCategoryCoreData(context: context)
+        categoryCoreData.header = category.header
+        
         CoreDataStack.shared.saveContext(context)
-    }
-    
-    func updateExistingTrackerCategory(_ trackerCategoryCoreData: TrackerCategoryCoreData, with category: TrackerCategory) {
-        trackerCategoryCoreData.header = category.header
-        category.trackers.forEach { tracker in
-            let trackerCoreData = TrackerCoreData(context: context)
-            trackerCoreData.id = tracker.id
-            trackerCoreData.name = tracker.name
-            trackerCoreData.color = tracker.color
-            trackerCoreData.emoji = tracker.emoji
-            trackerCoreData.shedule = daysValueTransformer.transformedValue(tracker.shedule) as? NSObject
-            trackerCategoryCoreData.addToTrackers(trackerCoreData)
-        }
-    }
-    
-    func addNewTracker(_ tracker: Tracker, toCategory trackerCategory: TrackerCategory) throws {
-        let category = fetchedResultController.fetchedObjects?.first {
-            $0.header == trackerCategory.header
-        }
-        
-        let trackerCoreData = TrackerCoreData(context: context)
-        trackerCoreData.name = tracker.name
-        trackerCoreData.id = tracker.id
-        trackerCoreData.emoji = tracker.emoji
-        trackerCoreData.color = tracker.color
-        trackerCoreData.shedule = daysValueTransformer.transformedValue(tracker.shedule) as? NSObject
-        
-        category?.addToTrackers(trackerCoreData)
-        CoreDataStack.shared.saveContext(context)
-    }
-    
-    func fetchPredicate(trackerName: String) -> [TrackerCategory] {
-        if trackerName.isEmpty {
-            return trackerCategories
-        } else {
-            let fetchRequest = NSFetchRequest<TrackerCategoryCoreData>(entityName: "TrackerCategoryCoreData")
-            fetchRequest.returnsObjectsAsFaults = false
-            fetchRequest.predicate = NSPredicate(format: "ANY trackers.nameTracker CONTAINS[cd] %@", trackerName)
-            guard let trackerCategoriesCoreData = try? context.fetch(fetchRequest),
-                  let categories = try? trackerCategoriesCoreData.map({ try self.trackerCategory(from: $0)}) else {
-                return []
-            }
-        
-            return categories
-        }
+        try? fetchedResultController.performFetch()
     }
 }
 
+//MARK: - NSFetchedResultsControllerDelegate
 extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
     
-    func controllerWillChangeContent(
-        _ controller: NSFetchedResultsController<NSFetchRequestResult>)
-    {
+    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         insertedIndexes = IndexSet()
         deletedIndexes = IndexSet()
         updatedIndexes = IndexSet()
         movedIndexes = Set<TrackerStoreUpdate.Move>()
     }
     
-    func controllerDidChangeContent(
-        _ controller: NSFetchedResultsController<NSFetchRequestResult>)
-    {
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         delegate?.store(
             self,
             didUpdate: TrackerStoreUpdate(
@@ -183,5 +132,45 @@ extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
             @unknown default:
                 fatalError()
         }
+    }
+}
+
+//MARK: - Private functions
+private extension TrackerCategoryStore {
+    func convertToTrackerCategory(data: TrackerCategoryCoreData) throws -> TrackerCategory {
+        guard let header = data.header,
+              let trackersCoreData = data.trackers?.allObjects as? [TrackerCoreData] else {
+            
+            throw TrackerBaseError.error
+        }
+        let trackers = convertToTrackers(trackersCoreData)
+        return TrackerCategory(header: header, trackers: trackers)
+    }
+    
+    func convertToTrackers(_ trackersCoreData: [TrackerCoreData]) -> [Tracker] {
+        var result: [Tracker] = []
+        
+        trackersCoreData.forEach { trackerCoreData in
+            guard let id = trackerCoreData.id,
+                  let name = trackerCoreData.name,
+                  let color = trackerCoreData.color as? UIColor,
+                  let emoji = trackerCoreData.emoji,
+                  let strShedule = trackerCoreData.shedule else {
+                return
+            }
+            
+            result.append(
+                Tracker(
+                    id: id,
+                    name: name,
+                    color: color,
+                    emoji: emoji,
+                    shedule: daysValueTransformer.stringToWeekDays(strShedule)
+                )
+            )
+            
+        }
+        
+        return result
     }
 }

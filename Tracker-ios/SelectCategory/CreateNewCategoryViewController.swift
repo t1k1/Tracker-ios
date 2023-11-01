@@ -24,6 +24,7 @@ final class CreateNewCategoryViewController: UIViewController {
         textField.translatesAutoresizingMaskIntoConstraints = false
         
         textField.setLeftPaddingPoints(10)
+        textField.autocorrectionType = UITextAutocorrectionType.no
         textField.placeholder = "Введите название категории"
         textField.backgroundColor = UIColor.ypBackground
         textField.layer.cornerRadius = 16
@@ -59,16 +60,25 @@ final class CreateNewCategoryViewController: UIViewController {
 
 //MARK: - UITextFieldDelegate
 extension CreateNewCategoryViewController: UITextFieldDelegate {
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        if let text = textField.text,
-           text.count > 0 {
-            
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+
+        let currentString: NSString? = textField.text as? NSString
+        guard let currentString = currentString else { return true }
+        let newString: NSString = currentString.replacingCharacters(in: range, with: string) as NSString
+       
+        let count = (newString as String).count
+        if count > 0 {
             doneButton.isEnabled = true
             doneButton.backgroundColor = UIColor.ypBlack
         } else {
             doneButton.isEnabled = false
             doneButton.backgroundColor = UIColor.ypGray
         }
+        
+        return true
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
     }

@@ -7,44 +7,66 @@
 import CoreData
 import UIKit
 
-final class TrackerStore {
-    private let context = CoreDataStack.shared.context
-    private let daysValueTransformer = DaysValueTransformer()
+final class TrackerStore: NSObject {
+    //MARK: - Public variables
+    static let shared = TrackerStore()
     
-    func addNewTracker(_ tracker: Tracker) throws {
-        let trackerCoreData = TrackerCoreData(context: context)
-        updateExistingTracker(trackerCoreData, with: tracker)
-        CoreDataStack.shared.saveContext(context)
+    //MARK: - Private variables
+    private let context: NSManagedObjectContext
+    private var fetchedResultController: NSFetchedResultsController<TrackerCoreData>!
+    private let daysValueTransformer = DaysValueTransformer.shared
+    private let trackerCaregoryStore = TrackerCategoryStore.shared
+    
+    //MARK: - Initialization
+    convenience override init() {
+        let context = CoreDataStack.shared.context
+        self.init(context: context)
     }
     
-    func updateExistingTracker(_ trackerCoreData: TrackerCoreData, with tracker: Tracker) {
+    init(context: NSManagedObjectContext) {
+        self.context = context
+        super.init()
+        
+        let fetchRequest = TrackerCoreData.fetchRequest()
+        fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \TrackerCoreData.name, ascending: true)]
+        
+        let resultController = NSFetchedResultsController(
+            fetchRequest: fetchRequest,
+            managedObjectContext: context,
+            sectionNameKeyPath: nil,
+            cacheName: nil
+        )
+        self.fetchedResultController = resultController
+        try? resultController.performFetch()
+    }
+    
+    //MARK: - Public functions
+    func addNewTracker(tracker: Tracker, category: TrackerCategory) throws {
+        var categoryCoreData = try trackerCaregoryStore.fetchCategoriesCoreData(categoryName: category.header)
+        
+        if categoryCoreData.isEmpty {
+            try? trackerCaregoryStore.addNewCategory(category: category)
+            categoryCoreData = try trackerCaregoryStore.fetchCategoriesCoreData(categoryName: category.header)
+        }
+        
+        guard let categoryCoreData = categoryCoreData.first else { throw TrackerBaseError.error }
+        
+        addTrackerTo(tracker, categoryCoreData: categoryCoreData)
+    }
+}
+
+//MARK: - Private functions
+private extension TrackerStore {
+    func addTrackerTo(_ tracker: Tracker, categoryCoreData: TrackerCategoryCoreData) {        
+        let trackerCoreData = TrackerCoreData(context: context)
         trackerCoreData.id = tracker.id
         trackerCoreData.color = tracker.color
         trackerCoreData.emoji = tracker.emoji
         trackerCoreData.name = tracker.name
-        trackerCoreData.shedule = daysValueTransformer.transformedValue(tracker.shedule) as? NSObject
-    }
-    
-    func fetchTrackers() throws -> [Tracker] {
-        let fetchRequest = TrackerCoreData.fetchRequest()
-        let trackers = try context.fetch(fetchRequest)
-        return try trackers.map({ try self.tracker(from: $0) })
-    }
-    
-    func tracker(from data: TrackerCoreData) throws -> Tracker {
-        guard let id = data.id,
-              let name = data.name,
-              let color = data.color as? UIColor,
-              let emoji = data.emoji,
-              let shedule = daysValueTransformer.reverseTransformedValue(data.shedule) as? [WeekDay] else {
-            
-            throw TrackerBaseError.error
-        }
-        return Tracker(id: id,
-                       name: name,
-                       color: color,
-                       emoji: emoji,
-                       shedule: shedule
-        )
+        trackerCoreData.shedule = daysValueTransformer.weekDaysToString(tracker.shedule)
+        
+        categoryCoreData.addToTrackers(trackerCoreData)
+        CoreDataStack.shared.saveContext(context)
+        try? fetchedResultController.performFetch()
     }
 }

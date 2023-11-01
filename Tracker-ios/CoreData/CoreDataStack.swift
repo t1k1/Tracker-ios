@@ -8,6 +8,7 @@
 import Foundation
 import CoreData
 
+//MARK: - Errors enum
 enum TrackerBaseError: Error {
     case error
 }
@@ -37,8 +38,8 @@ final class CoreDataStack {
         if context.hasChanges {
             do {
                 try context.save()
-            } catch {
-                print("Не удалось сохранить контекст!")
+            } catch let error as NSError {
+                print("Не удалось сохранить контекст! Ошибка: \(error), \(error.userInfo)")
                 context.rollback()
             }
         }

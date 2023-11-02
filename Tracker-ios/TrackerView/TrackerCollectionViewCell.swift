@@ -77,7 +77,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     
     //MARK: - Private variables
     private var isCompleted: Bool = false
-    private var trackerId: UInt?
+    private var trackerId: UUID?
     private var indexPath: IndexPath?
     private var selectedDate: Date?
     

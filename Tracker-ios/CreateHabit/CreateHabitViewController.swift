@@ -20,10 +20,19 @@ protocol TextFieldDelegate: AnyObject {
     func updateHabitName(with name: String?)
 }
 
+protocol EmojiCellDelegate: AnyObject {
+    func updateEmoji(with emoji: String?)
+}
+
+protocol ColorsCellDelegate: AnyObject {
+    func updateColor(with color: UIColor?)
+}
+
 //MARK: - CreateHabitViewController
 final class CreateHabitViewController: UIViewController {
     //MARK: - Public variables
     weak var delegate: TrackerViewControllerDelegate?
+    var tableCellNames: Dictionary<Int, [String]>?
     
     //MARK: - Layout variables
     private lazy var headerLabel: UILabel = {
@@ -78,15 +87,15 @@ final class CreateHabitViewController: UIViewController {
     private var category: TrackerCategory?
     private var sheduleArr: [WeekDay]?
     private var habitName: String?
-    private struct Сonst {
-        static let tableCellNames = [["textField"],["category","shedule"]]
-    }
+    private var emoji: String?
+    private var color: UIColor?
     
     //MARK: - Lyfecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setUpView()
+        fillSheduleIfRequired()
     }
 }
 
@@ -101,11 +110,16 @@ extension CreateHabitViewController: UITableViewDelegate {
 //MARK: - UITableViewDataSource
 extension CreateHabitViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return Сonst.tableCellNames[section].count
+        guard let tableCellNames = tableCellNames,
+              let section = tableCellNames[section] else {
+            return 0
+        }
+        return section.count
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return Сonst.tableCellNames.count
+        guard let tableCellNames = tableCellNames else { return 0 }
+        return tableCellNames.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -120,7 +134,7 @@ extension CreateHabitViewController: UITableViewDataSource {
             cell.configureCell()
             
             return cell
-        } else {
+        } else if indexPath.section == 1 {
             var text = ""
             var description: String? = nil
             
@@ -141,6 +155,40 @@ extension CreateHabitViewController: UITableViewDataSource {
             cell.configureCell(text: text, description: description)
             
             return cell
+            
+        } else if indexPath.section == 2 {
+            guard let cell = tableView.dequeueReusableCell(
+                withIdentifier: "emojiCell",
+                for: indexPath
+            ) as? EmojiCell else {
+                return UITableViewCell()
+            }
+                
+            cell.delegate = self
+            cell.configureCell()
+            
+            return cell
+        } else {
+            
+            guard let cell = tableView.dequeueReusableCell(
+                withIdentifier: "colorsCell",
+                for: indexPath
+            ) as? ColorsCell else {
+                return UITableViewCell()
+            }
+            
+            cell.delegate = self
+            cell.configureCell()
+            
+            return cell
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if indexPath.section == 0 || indexPath.section == 1 {
+            return 75
+        } else {
+            return 198
         }
     }
 }
@@ -175,6 +223,24 @@ extension CreateHabitViewController: TextFieldDelegate {
     }
 }
 
+//MARK: - EmojiCellDelegate
+extension CreateHabitViewController: EmojiCellDelegate{
+    func updateEmoji(with emoji: String?) {
+        self.emoji = emoji
+        changeCreateButton()
+        tableView.reloadData()
+    }
+}
+
+//MARK: - ColorsCellDelegate
+extension CreateHabitViewController: ColorsCellDelegate {
+    func updateColor(with color: UIColor?) {
+        self.color = color
+        changeCreateButton()
+        tableView.reloadData()
+    }
+}
+
 //MARK: - Private functions
 private extension CreateHabitViewController {
     //MARK: - Configurating functions
@@ -189,6 +255,8 @@ private extension CreateHabitViewController {
     func configureTableView() {
         tableView.register(TextFieldCell.self, forCellReuseIdentifier: "textFieldCell")
         tableView.register(CategorySheduleCell.self, forCellReuseIdentifier: "categorySheduleCell")
+        tableView.register(EmojiCell.self, forCellReuseIdentifier: "emojiCell")
+        tableView.register(ColorsCell.self, forCellReuseIdentifier: "colorsCell")
         tableView.delegate = self
         tableView.dataSource = self
     }
@@ -223,17 +291,30 @@ private extension CreateHabitViewController {
         ])
     }
     
+    func  fillSheduleIfRequired() {
+        guard let tableCellNames = tableCellNames,
+              let section = tableCellNames[1] else {
+            return
+        }
+        
+        if section.count == 1 {
+            sheduleArr = WeekDay.allCases
+        }
+    }
+    
     //MARK: - Private class functions
     func selectCell(indexPath: IndexPath) {
         var viewController: UIViewController?
         
-        if indexPath.row == 0 {
-            viewController = SelectCategoryViewController()
-        } else if indexPath.row == 1 {
-            viewController = SelectSheduleViewController()
+        if indexPath.section == 1 {
+            if indexPath.row == 0 {
+                viewController = SelectCategoryViewController()
+            } else if indexPath.row == 1 {
+                viewController = SelectSheduleViewController()
+            }
+            
+            presentSelect(viewController)
         }
-        
-        presentSelect(viewController)
     }
     
     func presentSelect(_ viewController: UIViewController?) {
@@ -254,6 +335,8 @@ private extension CreateHabitViewController {
         if let category = category,
            let sheduleArr = sheduleArr,
            let habitName = habitName,
+           let _ = color,
+           let _ = emoji,
            let _ = delegate,
            category.header.count > 0,
            habitName.count > 0,
@@ -287,16 +370,24 @@ private extension CreateHabitViewController {
         if let category = category,
            let sheduleArr = sheduleArr,
            let habitName = habitName,
+           let color = color,
+           let emoji = emoji,
            let delegate = delegate {
             
-            delegate.addNewTracker(category: category, sheduleArr: sheduleArr, habitName: habitName)
+            delegate.addNewTracker(
+                category: category,
+                sheduleArr: sheduleArr,
+                habitName: habitName,
+                emoji: emoji,
+                color: color
+            )
             
-            guard let window = UIApplication.shared.windows.first else {
+            guard let window = UIApplication.shared.windows.first,
+                  let rootViewController = window.rootViewController else {
                 assertionFailure("Invalid Configuration")
                 return
             }
-            
-            window.rootViewController = TrackerViewController()
+            rootViewController.dismiss(animated: true, completion: nil)
         }
     }
     

@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum WeekDay: CaseIterable {
+enum WeekDay: CaseIterable, Codable {
     case monday, tuesday, wednesday, thursday, friday, saturday, sunday
     
     var dayName: String {

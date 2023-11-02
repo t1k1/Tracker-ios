@@ -9,10 +9,16 @@ import UIKit
 
 //MARK: - Protocols
 protocol TrackerViewControllerDelegate: AnyObject {
-    func addNewTracker(category: TrackerCategory, sheduleArr: [WeekDay], habitName: String)
+    func addNewTracker(
+        category: TrackerCategory,
+        sheduleArr: [WeekDay],
+        habitName: String,
+        emoji: String,
+        color: UIColor
+    )
 }
 protocol TrackerCellDelegate: AnyObject {
-    func updateTrackerRecord(id: UInt, isCompleted: Bool, indexPath: IndexPath)
+    func updateTrackerRecord(id: UUID, isCompleted: Bool, indexPath: IndexPath)
 }
 
 //MARK: - TrackerViewController
@@ -132,16 +138,19 @@ class TrackerViewController: UIViewController {
     }()
     
     //MARK: - Private variables
-    private let mockData = MockData.shared
+    private let categoryStore = TrackerCategoryStore.shared
+    private let recordStore = TrackerRecordStore.shared
+    private let trackerStore = TrackerStore.shared
     private var categories: [TrackerCategory] = []
     private var completedTrackers: [TrackerRecord] = []
     private var visibleCategories: [TrackerCategory] = []
     private var currentDate: Date?
-    
+   
     //MARK: - Lyfecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        categoryStore.delegate = self
         updateCategories()
         setUpView()
     }
@@ -174,27 +183,42 @@ extension TrackerViewController: UITextFieldDelegate {
     }
 }
 
+//MARK: - TrackerCategoryStoreDelegate
+extension TrackerViewController: TrackerCategoryStoreDelegate {
+    func store(_ store: TrackerCategoryStore, didUpdate update: TrackerStoreUpdate) {
+        updateCategories()
+        collectionView.reloadData()
+    }
+}
+
 //MARK: - TrackerViewControllerDelegate
 extension TrackerViewController: TrackerViewControllerDelegate {
-    func addNewTracker(category: TrackerCategory, sheduleArr: [WeekDay], habitName: String) {
-        mockData.addTrackerInCategory(
-            category: category,
-            tracker: Tracker(
-                id: UInt(mockData.getCategories().count + 1),
-                name: habitName,
-                color: .ypRed,
-                emoji: "",
-                shedule: sheduleArr
-            )
+    func addNewTracker(
+        category: TrackerCategory,
+        sheduleArr: [WeekDay],
+        habitName: String,
+        emoji: String,
+        color: UIColor
+    ) {
+        let newTracker = Tracker(
+            id: UUID(),
+            name: habitName,
+            color: color,
+            emoji: emoji,
+            shedule: sheduleArr
         )
+        
+        try? trackerStore.addNewTracker(tracker: newTracker, category: category)
         
         updateCategories()
         collectionView.reloadData()
         changeVisibility()
+        
+        dismiss(animated: true)
     }
 }
 
-// MARK: - UICollectionViewDataSource
+//MARK: - UICollectionViewDataSource
 extension TrackerViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return visibleCategories[section].trackers.count
@@ -237,14 +261,14 @@ extension TrackerViewController: UICollectionViewDataSource {
     }
 }
 
-// MARK: - UICollectionViewDelegate
+//MARK: - UICollectionViewDelegate
 extension TrackerViewController: UICollectionViewDelegate{
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return visibleCategories.count
     }
 }
 
-// MARK: - UICollectionViewDelegateFlowLayout
+//MARK: - UICollectionViewDelegateFlowLayout
 extension TrackerViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(
         _ collectionView: UICollectionView,
@@ -260,20 +284,21 @@ extension TrackerViewController: UICollectionViewDelegateFlowLayout {
     }
 }
 
-// MARK: - TrackerCellDelegate
+//MARK: - TrackerCellDelegate
 extension TrackerViewController: TrackerCellDelegate {
-    func updateTrackerRecord(id: UInt, isCompleted: Bool, indexPath: IndexPath) {
+    func updateTrackerRecord(id: UUID, isCompleted: Bool, indexPath: IndexPath) {
+        let trackerRecord = TrackerRecord(id: id, date: datePicker.date)
+        
         if isCompleted {
-            let trackerRecord = TrackerRecord(id: id, date: datePicker.date)
-            completedTrackers.append(trackerRecord)
-            collectionView.reloadItems(at: [indexPath])
+            try? recordStore.addTrackerRecord(trackerRecord)
         } else {
-            completedTrackers.removeAll { tracker in
-                let day = Calendar.current.isDate(tracker.date, inSameDayAs: datePicker.date)
-                return tracker.id == id && day
-            }
-            collectionView.reloadItems(at: [indexPath])
+            try? recordStore.deleteRecordWith(id: trackerRecord.id, date: trackerRecord.date)
         }
+        
+        guard let completedTrackers = try? recordStore.fetchTrackerRecords() else { return }
+        self.completedTrackers = completedTrackers
+        
+        collectionView.reloadItems(at: [indexPath])
     }
 }
 
@@ -446,12 +471,16 @@ private extension TrackerViewController {
     }
     
     func updateCategories() {
-        categories = mockData.getCategories()
-        visibleCategories = categories
+        guard let categories = try? categoryStore.fetchCategories() else { return }
+        self.categories = categories
+        self.visibleCategories = categories
+        
+        guard let completedTrackers = try? recordStore.fetchTrackerRecords() else { return }
+        self.completedTrackers = completedTrackers
         showFilteredTrackersByDay()
     }
     
-    func isTrackerComleted(_ id: UInt) -> Bool {
+    func isTrackerComleted(_ id: UUID) -> Bool {
         let calendar = Calendar.current
         return completedTrackers.contains { tracker in
             let date = calendar.isDate( tracker.date, inSameDayAs: datePicker.date)
@@ -460,7 +489,7 @@ private extension TrackerViewController {
         }
     }
     
-    func getComletedCount(id: UInt) -> Int {
+    func getComletedCount(id: UUID) -> Int {
         var result: Int = 0
         
         completedTrackers.forEach { trackerRecord in

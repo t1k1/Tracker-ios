@@ -13,7 +13,7 @@ final class TrackerStore: NSObject {
     
     //MARK: - Private variables
     private let context: NSManagedObjectContext
-    private var fetchedResultController: NSFetchedResultsController<TrackerCoreData>!
+    private var fetchedResultController: NSFetchedResultsController<TrackerCoreData>?
     private let daysValueTransformer = DaysValueTransformer.shared
     private let trackerCaregoryStore = TrackerCategoryStore.shared
     
@@ -67,6 +67,8 @@ private extension TrackerStore {
         
         categoryCoreData.addToTrackers(trackerCoreData)
         CoreDataStack.shared.saveContext(context)
+        
+        guard let fetchedResultController = fetchedResultController else { return }
         try? fetchedResultController.performFetch()
     }
 }

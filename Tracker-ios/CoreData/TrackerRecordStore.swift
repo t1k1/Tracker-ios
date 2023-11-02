@@ -15,7 +15,7 @@ final class TrackerRecordStore: NSObject {
     //MARK: - Private variables
     private let entityName = "TrackerRecordCoreData"
     private let context: NSManagedObjectContext
-    private var fetchedResultController: NSFetchedResultsController<TrackerRecordCoreData>!
+    private var fetchedResultController: NSFetchedResultsController<TrackerRecordCoreData>?
     
     //MARK: - Initialization
     convenience override init() {
@@ -48,11 +48,13 @@ final class TrackerRecordStore: NSObject {
         
         CoreDataStack.shared.saveContext(context)
         
+        guard let fetchedResultController = fetchedResultController else { return }
         try fetchedResultController.performFetch()
     }
     
     func fetchTrackerRecords() throws -> [TrackerRecord] {
-        guard let fetchedObjects = fetchedResultController.fetchedObjects,
+        guard let fetchedResultController = fetchedResultController,
+              let fetchedObjects = fetchedResultController.fetchedObjects,
               let records = try? fetchedObjects.map({
                   try self.convertToTrackerRecord(trackerRecordCoreData: $0)
               }) else {
@@ -102,6 +104,8 @@ final class TrackerRecordStore: NSObject {
         
         context.delete(trackerRecords[deletingIndex])
         CoreDataStack.shared.saveContext(context)
+        
+        guard let fetchedResultController = fetchedResultController else { return }
         try fetchedResultController.performFetch()
     }
 }

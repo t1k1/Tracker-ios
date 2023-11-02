@@ -38,8 +38,7 @@ final class CoreDataStack {
         if context.hasChanges {
             do {
                 try context.save()
-            } catch let error as NSError {
-                print("Не удалось сохранить контекст! Ошибка: \(error), \(error.userInfo)")
+            } catch {
                 context.rollback()
             }
         }

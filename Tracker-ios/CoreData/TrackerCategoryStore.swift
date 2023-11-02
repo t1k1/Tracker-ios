@@ -22,7 +22,7 @@ final class TrackerCategoryStore: NSObject {
     //MARK: - Private variables
     private let context: NSManagedObjectContext
     private let daysValueTransformer = DaysValueTransformer.shared
-    private var fetchedResultController: NSFetchedResultsController<TrackerCategoryCoreData>!
+    private var fetchedResultController: NSFetchedResultsController<TrackerCategoryCoreData>?
     private var insertedIndexes: IndexSet?
     private var deletedIndexes: IndexSet?
     private var updatedIndexes: IndexSet?
@@ -55,7 +55,8 @@ final class TrackerCategoryStore: NSObject {
     
     //MARK: - Public functions
     func fetchCategories() throws -> [TrackerCategory] {
-        guard let fetchedObjects = fetchedResultController.fetchedObjects,
+        guard let fetchedResultController = fetchedResultController,
+              let fetchedObjects = fetchedResultController.fetchedObjects,
               let categories = try? fetchedObjects.map({
                   try self.convertToTrackerCategory(data: $0)
               }) else {
@@ -79,6 +80,8 @@ final class TrackerCategoryStore: NSObject {
         categoryCoreData.header = category.header
         
         CoreDataStack.shared.saveContext(context)
+        
+        guard let fetchedResultController = fetchedResultController else { return }
         try? fetchedResultController.performFetch()
     }
 }
@@ -94,19 +97,25 @@ extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
     }
     
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        guard let insertedIndexes = insertedIndexes,
+              let deletedIndexes = deletedIndexes,
+              let updatedIndexes = updatedIndexes,
+              let movedIndexes = movedIndexes else {
+            return
+        }
         delegate?.store(
             self,
             didUpdate: TrackerStoreUpdate(
-                insertedIndexes: insertedIndexes!,
-                deletedIndexes: deletedIndexes!,
-                updatedIndexes: updatedIndexes!,
-                movedIndexes: movedIndexes!
+                insertedIndexes: insertedIndexes,
+                deletedIndexes: deletedIndexes,
+                updatedIndexes: updatedIndexes,
+                movedIndexes: movedIndexes
             )
         )
-        insertedIndexes = nil
-        deletedIndexes = nil
-        updatedIndexes = nil
-        movedIndexes = nil
+        self.insertedIndexes = nil
+        self.deletedIndexes = nil
+        self.updatedIndexes = nil
+        self.movedIndexes = nil
     }
     
     func controller(
@@ -168,7 +177,6 @@ private extension TrackerCategoryStore {
                     shedule: daysValueTransformer.stringToWeekDays(strShedule)
                 )
             )
-            
         }
         
         return result

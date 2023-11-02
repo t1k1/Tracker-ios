@@ -32,7 +32,7 @@ protocol ColorsCellDelegate: AnyObject {
 final class CreateHabitViewController: UIViewController {
     //MARK: - Public variables
     weak var delegate: TrackerViewControllerDelegate?
-    var tableCellNames: [[String]]?
+    var tableCellNames: Dictionary<Int, [String]>?
     
     //MARK: - Layout variables
     private lazy var headerLabel: UILabel = {
@@ -110,8 +110,11 @@ extension CreateHabitViewController: UITableViewDelegate {
 //MARK: - UITableViewDataSource
 extension CreateHabitViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard let tableCellNames = tableCellNames else { return 0 }
-        return tableCellNames[section].count
+        guard let tableCellNames = tableCellNames,
+              let section = tableCellNames[section] else {
+            return 0
+        }
+        return section.count
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -289,9 +292,12 @@ private extension CreateHabitViewController {
     }
     
     func  fillSheduleIfRequired() {
-        guard let tableCellNames = tableCellNames else { return }
+        guard let tableCellNames = tableCellNames,
+              let section = tableCellNames[1] else {
+            return
+        }
         
-        if tableCellNames[1].count == 1 {
+        if section.count == 1 {
             sheduleArr = WeekDay.allCases
         }
     }

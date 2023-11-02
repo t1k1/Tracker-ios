@@ -218,7 +218,7 @@ extension TrackerViewController: TrackerViewControllerDelegate {
     }
 }
 
-// MARK: - UICollectionViewDataSource
+//MARK: - UICollectionViewDataSource
 extension TrackerViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return visibleCategories[section].trackers.count
@@ -261,14 +261,14 @@ extension TrackerViewController: UICollectionViewDataSource {
     }
 }
 
-// MARK: - UICollectionViewDelegate
+//MARK: - UICollectionViewDelegate
 extension TrackerViewController: UICollectionViewDelegate{
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return visibleCategories.count
     }
 }
 
-// MARK: - UICollectionViewDelegateFlowLayout
+//MARK: - UICollectionViewDelegateFlowLayout
 extension TrackerViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(
         _ collectionView: UICollectionView,
@@ -284,7 +284,7 @@ extension TrackerViewController: UICollectionViewDelegateFlowLayout {
     }
 }
 
-// MARK: - TrackerCellDelegate
+//MARK: - TrackerCellDelegate
 extension TrackerViewController: TrackerCellDelegate {
     func updateTrackerRecord(id: UUID, isCompleted: Bool, indexPath: IndexPath) {
         let trackerRecord = TrackerRecord(id: id, date: datePicker.date)

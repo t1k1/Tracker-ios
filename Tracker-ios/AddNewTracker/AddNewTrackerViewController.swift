@@ -89,7 +89,12 @@ private extension AddNewTrackerViewController {
     func createHabit() {
         let createHabitViewController = CreateHabitViewController()
         createHabitViewController.delegate = delegate
-        createHabitViewController.tableCellNames = [["textField"],["category","shedule"],["emoji"],["colors"]]
+        createHabitViewController.tableCellNames = [
+            0: ["textField"],
+            1: ["category","shedule"],
+            2: ["emoji"],
+            3: ["colors"]
+        ]
         
         let navigatonViewController = UINavigationController(rootViewController: createHabitViewController)
         present(navigatonViewController, animated: true)
@@ -99,7 +104,12 @@ private extension AddNewTrackerViewController {
     func createEvent() {
         let createHabitViewController = CreateHabitViewController()
         createHabitViewController.delegate = delegate
-        createHabitViewController.tableCellNames = [["textField"],["category"],["emoji"],["colors"]]
+        createHabitViewController.tableCellNames = [
+            0: ["textField"],
+            1: ["category"],
+            2: ["emoji"],
+            3: ["colors"]
+        ]
         
         let navigatonViewController = UINavigationController(rootViewController: createHabitViewController)
         present(navigatonViewController, animated: true)

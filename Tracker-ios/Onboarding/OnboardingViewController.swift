@@ -172,6 +172,7 @@ private extension OnboardingViewController {
             assertionFailure("Invalid Configuration")
             return
         }
+        UserDefaults.standard.set(true, forKey: "needToShowOnboarding")
         window.rootViewController = TabBarController()
     }
 }

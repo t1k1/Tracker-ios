@@ -308,7 +308,8 @@ private extension CreateHabitViewController {
         
         if indexPath.section == 1 {
             if indexPath.row == 0 {
-                viewController = SelectCategoryViewController()
+                let viewModel = SelectCategoryViewModel(delegate: self)
+                viewController = SelectCategoryViewController(viewModel: viewModel)
             } else if indexPath.row == 1 {
                 viewController = SelectSheduleViewController()
             }
@@ -320,9 +321,7 @@ private extension CreateHabitViewController {
     func presentSelect(_ viewController: UIViewController?) {
         guard let viewController = viewController else { return }
         
-        if let viewController = viewController as? SelectCategoryViewController {
-            viewController.delegate = self
-        } else if let viewController = viewController as? SelectSheduleViewController {
+        if let viewController = viewController as? SelectSheduleViewController {
             viewController.delegate = self
             viewController.currentShedule = sheduleArr
         }

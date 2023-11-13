@@ -16,6 +16,7 @@ extension UIColor {
     static var ypLightGray: UIColor { UIColor(named: "LightGray") ?? UIColor.gray }
     static var ypRed: UIColor { UIColor(named: "Red") ?? UIColor.red }
     static var ypBackgroundSecond: UIColor { UIColor(named: "BackgroundSecond") ?? UIColor.white }
+    static var ypBlackOpacity30: UIColor { UIColor(named: "BlackOpacity30") ?? UIColor.gray }
     
     static var ypColorSelection1: UIColor { UIColor(named: "ColorSelection 1") ?? UIColor.red }
     static var ypColorSelection2: UIColor { UIColor(named: "ColorSelection 2") ?? UIColor.orange }

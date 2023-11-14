@@ -46,22 +46,11 @@ final class OnboardingPageViewController: UIViewController {
     }()
     
     //MARK: - Initialization
-    init(indexOfPage: Int) {
+    init(image: UIImage?, textLabel: String) {
         super.init(nibName: nil, bundle: nil)
         
-        if indexOfPage == 0 {
-            imageView.image = UIImage(named: "OnboardingImage1")
-            label.text = """
-            Отслеживайте только
-            то, что хотите
-            """
-        } else if indexOfPage == 1 {
-            imageView.image = UIImage(named: "OnboardingImage2")
-            label.text = """
-            Даже если это
-            не литры воды и йога
-            """
-        }
+        imageView.image = image
+        label.text = textLabel
     }
     
     required init?(coder: NSCoder) {

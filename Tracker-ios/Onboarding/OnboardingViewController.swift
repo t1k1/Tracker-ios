@@ -10,8 +10,14 @@ import UIKit
 final class OnboardingViewController: UIPageViewController {
     //MARK: - Layout variables
     private lazy var pages: [UIViewController] = {
-        let first = OnboardingPageViewController(indexOfPage: 0)
-        let second = OnboardingPageViewController(indexOfPage: 1)
+        let first = OnboardingPageViewController(
+            image: UIImage(named: "OnboardingImage1"),
+            textLabel: "Отслеживайте только \n то, что хотите"
+        )
+        let second = OnboardingPageViewController(
+            image: UIImage(named: "OnboardingImage2"),
+            textLabel: "Даже если это \n не литры воды и йога"
+        )
         
         return [first, second]
     }()

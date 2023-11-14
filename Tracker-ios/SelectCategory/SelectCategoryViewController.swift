@@ -147,15 +147,10 @@ private extension SelectCategoryViewController {
     }
     
     func changeVisability() {
-        if viewModel.categories.count > 0 {
-            categoryTableView.isHidden = false
-            centerLabel.isHidden = true
-            centerImageView.isHidden = true
-        } else {
-            categoryTableView.isHidden = true
-            centerLabel.isHidden = false
-            centerImageView.isHidden = false
-        }
+        let categoiesNotEmpty = viewModel.categories.count > 0
+        categoryTableView.isHidden = !categoiesNotEmpty
+        centerLabel.isHidden = categoiesNotEmpty
+        centerImageView.isHidden = categoiesNotEmpty
     }
     
     func configureTableView() {

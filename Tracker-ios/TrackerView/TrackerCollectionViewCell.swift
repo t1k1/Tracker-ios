@@ -91,7 +91,10 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         self.selectedDate = selectedDate
         
         changePlusButton()
-        daysLabel.text = getTextForDaysLabel(daysCount: daysCount)
+        daysLabel.text = String.localizedStringWithFormat(
+            NSLocalizedString("days count", comment: "Число дней"),
+            daysCount
+        )
         
         colorView.backgroundColor = tracker.color
         plusButton.backgroundColor = tracker.color
@@ -150,29 +153,6 @@ private extension TrackerCollectionViewCell {
             plusButton.alpha = 1
             plusButton.setImage(UIImage(systemName: "plus", withConfiguration: UIImage.SymbolConfiguration(pointSize: 11)), for: .normal)
         }
-    }
-    
-    func getTextForDaysLabel(daysCount: Int) -> String {
-        var strDay: String
-        
-        if ((daysCount % 100 / 10) == 1) {
-            strDay = "дней";
-            return "\(daysCount) \(strDay)"
-        }
-        
-        switch (daysCount % 10) {
-            case 1:
-                strDay = "день";
-            case 2:
-                strDay = "дней";
-            case 3:
-                strDay = "дней";
-            case 4:
-                strDay = "дня";
-            default:
-                strDay = "дней";
-        }
-        return "\(daysCount) \(strDay)"
     }
     
     @objc

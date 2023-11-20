@@ -13,9 +13,6 @@ protocol CreateNewCategoryDelegate: AnyObject {
 }
 
 final class SelectCategoryViewController: UIViewController {
-    //MARK: - Public variables
-    weak var delegate: CreateHabitDelegate?
-    
     //MARK: - Layout variables
     private lazy var headerLabel: UILabel = {
         let label = UILabel()
@@ -76,15 +73,22 @@ final class SelectCategoryViewController: UIViewController {
     }()
     
     //MARK: - Private variables
-    private let categoryStore = TrackerCategoryStore.shared
-    private let trackerStore = TrackerStore.shared
-    private var categories: [TrackerCategory] = []
+    private let viewModel: SelectCategoryViewModel
+    
+    //MARK: - Initialization
+    init(viewModel: SelectCategoryViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+        viewModel.onChange = self.categoryTableView.reloadData
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     //MARK: - Lyfecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        categories = getCategories()
         setUpView()
     }
 }
@@ -92,21 +96,20 @@ final class SelectCategoryViewController: UIViewController {
 //MARK: - CreateNewCategoryDelegate
 extension SelectCategoryViewController: CreateNewCategoryDelegate {
     func createNewCategory(category: String) {
-        try? categoryStore.addNewCategory(category: TrackerCategory(header: category, trackers: []))
-        categories = getCategories()
+        viewModel.addNewCategory(category: category)
+        
         changeVisability()
-        categoryTableView.reloadData()
     }
 }
 
 //MARK: - UITableViewDataSource
 extension SelectCategoryViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return categories.count
+        return viewModel.categories.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let category = categories[indexPath.row]
+        let category = viewModel.categories[indexPath.row]
         let header = category.header
         
         guard let cell = categoryTableView.dequeueReusableCell(
@@ -126,11 +129,7 @@ extension SelectCategoryViewController: UITableViewDataSource {
 //MARK: - UITableViewDelegate
 extension SelectCategoryViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let delegate = delegate else {
-            tableView.deselectRow(at: indexPath, animated: false)
-            return
-        }
-        delegate.updateCategory(category: categories[indexPath.row])
+        viewModel.updateCategory(category: viewModel.categories[indexPath.row])
         tableView.deselectRow(at: indexPath, animated: false)
         dismiss(animated: true)
     }
@@ -148,15 +147,10 @@ private extension SelectCategoryViewController {
     }
     
     func changeVisability() {
-        if categories.count > 0 {
-            categoryTableView.isHidden = false
-            centerLabel.isHidden = true
-            centerImageView.isHidden = true
-        } else {
-            categoryTableView.isHidden = true
-            centerLabel.isHidden = false
-            centerImageView.isHidden = false
-        }
+        let categoiesNotEmpty = viewModel.categories.count > 0
+        categoryTableView.isHidden = !categoiesNotEmpty
+        centerLabel.isHidden = categoiesNotEmpty
+        centerImageView.isHidden = categoiesNotEmpty
     }
     
     func configureTableView() {
@@ -164,7 +158,6 @@ private extension SelectCategoryViewController {
     }
     
     func addSubViews() {
-        
         view.addSubview(categoryTableView)
         view.addSubview(centerImageView)
         view.addSubview(centerLabel)
@@ -196,11 +189,6 @@ private extension SelectCategoryViewController {
             addCateroryButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50),
             addCateroryButton.heightAnchor.constraint(equalToConstant: 50)
         ])
-    }
-    
-    func getCategories() -> [TrackerCategory] {
-        guard let categories = try? categoryStore.fetchCategories() else { return [] }
-        return categories
     }
     
     @objc

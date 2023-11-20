@@ -61,6 +61,8 @@ final class CategorySheduleCell: UITableViewCell {
         
         if let description = description {
             descriptionLabel.text = description
+        } else {
+            descriptionLabel.text = ""
         }
     }
 }

@@ -18,7 +18,7 @@ final class TextFieldCell: UITableViewCell {
         
         textField.autocorrectionType = UITextAutocorrectionType.no
         textField.returnKeyType = UIReturnKeyType.done
-        textField.placeholder = "Введите название трекера"
+        textField.placeholder = NSLocalizedString("mes9", tableName: "LocalizableStr", comment: "")
         textField.layer.cornerRadius = 16
         textField.delegate = self
         

@@ -59,7 +59,7 @@ class TrackerViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
-        label.text = "Трекеры"
+        label.text = NSLocalizedString("trackers", tableName: "LocalizableStr", comment: "")
         label.font = .systemFont(ofSize: 34, weight: .bold)
         label.textColor = UIColor.ypBlack
         
@@ -89,7 +89,10 @@ class TrackerViewController: UIViewController {
         let attributes = [
             NSAttributedString.Key.foregroundColor: UIColor.ypGray
         ]
-        search.attributedPlaceholder = NSAttributedString(string: "Поиск", attributes: attributes)
+        search.attributedPlaceholder = NSAttributedString(
+            string: NSLocalizedString("search", tableName: "LocalizableStr", comment: ""),
+            attributes: attributes
+        )
         
         return search
     }()
@@ -97,7 +100,10 @@ class TrackerViewController: UIViewController {
         let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
         
-        button.setTitle("Отмена", for: .normal)
+        button.setTitle(
+            NSLocalizedString("cancellation", tableName: "LocalizableStr", comment: ""),
+            for: .normal
+        )
         button.tintColor = UIColor.ypBlue
         button.titleLabel?.font = .boldSystemFont(ofSize: 17)
         button.isHidden = true
@@ -117,7 +123,7 @@ class TrackerViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
-        label.text = "Что будем отслеживать?"
+        label.text = NSLocalizedString("mes4", tableName: "LocalizableStr", comment: "")
         label.font = .systemFont(ofSize: 12, weight: .medium)
         label.textColor = UIColor.ypBlack
         
@@ -452,11 +458,11 @@ private extension TrackerViewController {
     
     func changeVisibility(search: Bool = false) {
         var image = UIImage(named: "CenterImage")
-        var text = "Что будем отслеживать?"
+        var text = NSLocalizedString("mes4", tableName: "LocalizableStr", comment: "")
         
         if search {
             image = UIImage(named: "CenterImageSearch")
-            text = "Ничего не найдено"
+            text = NSLocalizedString("mes5", tableName: "LocalizableStr", comment: "")
         }
         
         if visibleCategories.count == 0 {

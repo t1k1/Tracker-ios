@@ -16,7 +16,7 @@ final class ColorsCell: UITableViewCell {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
-        label.text = "Цвет"
+        label.text = NSLocalizedString("color", tableName: "LocalizableStr", comment: "")
         label.font = .systemFont(ofSize: 19, weight: .bold)
         label.textColor = UIColor.ypBlack
         

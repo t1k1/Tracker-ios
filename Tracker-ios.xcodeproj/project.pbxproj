@@ -39,6 +39,7 @@
 		D5D189A32AD81025009F2D96 /* ColorsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5D189A22AD81025009F2D96 /* ColorsCell.swift */; };
 		D5D189A72AD82220009F2D96 /* EmojiCollectionviewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5D189A62AD82220009F2D96 /* EmojiCollectionviewCell.swift */; };
 		D5D189A92AD82234009F2D96 /* ColorsCollectionviewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5D189A82AD82234009F2D96 /* ColorsCollectionviewCell.swift */; };
+		D5E3B4A82B0E03ED00E05C55 /* LocalizableStr.strings in Resources */ = {isa = PBXBuildFile; fileRef = D5E3B4AA2B0E03ED00E05C55 /* LocalizableStr.strings */; };
 		D5F012BC2AE7C15E00B3AB69 /* DaysValueTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F012BB2AE7C15E00B3AB69 /* DaysValueTransformer.swift */; };
 		D5F012BF2AE7C4E900B3AB69 /* TrackerBase.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = D5F012BD2AE7C4E900B3AB69 /* TrackerBase.xcdatamodeld */; };
 		D5F012C52AE8FECF00B3AB69 /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F012C42AE8FECF00B3AB69 /* CoreDataStack.swift */; };
@@ -85,6 +86,8 @@
 		D5D189A22AD81025009F2D96 /* ColorsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorsCell.swift; sourceTree = "<group>"; };
 		D5D189A62AD82220009F2D96 /* EmojiCollectionviewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiCollectionviewCell.swift; sourceTree = "<group>"; };
 		D5D189A82AD82234009F2D96 /* ColorsCollectionviewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorsCollectionviewCell.swift; sourceTree = "<group>"; };
+		D5E3B4A92B0E03ED00E05C55 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/LocalizableStr.strings; sourceTree = "<group>"; };
+		D5E3B4AB2B0E03F200E05C55 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/LocalizableStr.strings; sourceTree = "<group>"; };
 		D5F012BB2AE7C15E00B3AB69 /* DaysValueTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DaysValueTransformer.swift; sourceTree = "<group>"; };
 		D5F012BE2AE7C4E900B3AB69 /* TrackerBase.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TrackerBase.xcdatamodel; sourceTree = "<group>"; };
 		D5F012C42AE8FECF00B3AB69 /* CoreDataStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStack.swift; sourceTree = "<group>"; };
@@ -119,6 +122,7 @@
 			isa = PBXGroup;
 			children = (
 				D547B5BA2B0B7A22004BA3A3 /* Localizable.stringsdict */,
+				D5E3B4AA2B0E03ED00E05C55 /* LocalizableStr.strings */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -342,6 +346,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D59466F22AC580CD00BD76FB /* LaunchScreen.storyboard in Resources */,
+				D5E3B4A82B0E03ED00E05C55 /* LocalizableStr.strings in Resources */,
 				D59466EF2AC580CD00BD76FB /* Assets.xcassets in Resources */,
 				D547B5B82B0B7A22004BA3A3 /* Localizable.stringsdict in Resources */,
 			);
@@ -412,6 +417,15 @@
 				D59466F12AC580CD00BD76FB /* Base */,
 			);
 			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		D5E3B4AA2B0E03ED00E05C55 /* LocalizableStr.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D5E3B4A92B0E03ED00E05C55 /* en */,
+				D5E3B4AB2B0E03F200E05C55 /* ru */,
+			);
+			name = LocalizableStr.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

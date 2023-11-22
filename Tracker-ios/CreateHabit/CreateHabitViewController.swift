@@ -39,7 +39,7 @@ final class CreateHabitViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
-        label.text = "Новая привычка"
+        label.text = NSLocalizedString("mes8", tableName: "LocalizableStr", comment: "")
         label.font = .systemFont(ofSize: 16, weight: .medium)
         label.textColor = UIColor.ypBlack
         
@@ -57,7 +57,10 @@ final class CreateHabitViewController: UIViewController {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         
-        button.setTitle("Отменить", for: .normal)
+        button.setTitle(
+            NSLocalizedString("cancel", tableName: "LocalizableStr", comment: ""),
+            for: .normal
+        )
         button.addTarget(self, action: #selector(cancel), for: .touchUpInside)
         button.backgroundColor = UIColor.clear
         button.setTitleColor(UIColor.ypRed, for: .normal)
@@ -72,7 +75,10 @@ final class CreateHabitViewController: UIViewController {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         
-        button.setTitle("Создать", for: .normal)
+        button.setTitle(
+            NSLocalizedString("create", tableName: "LocalizableStr", comment: ""),
+            for: .normal
+        )
         button.addTarget(self, action: #selector(create), for: .touchUpInside)
         button.backgroundColor = UIColor.ypGray
         button.isEnabled = false
@@ -145,10 +151,10 @@ extension CreateHabitViewController: UITableViewDataSource {
                 return UITableViewCell()
             }
             if indexPath.row == 0 {
-                text = "Категория"
+                text = NSLocalizedString("category", tableName: "LocalizableStr", comment: "")
                 description = category?.header
             } else {
-                text = "Расписание"
+                text = NSLocalizedString("shedule", tableName: "LocalizableStr", comment: "")
                 description = stringFromSheduleArr()
             }
             
@@ -163,7 +169,7 @@ extension CreateHabitViewController: UITableViewDataSource {
             ) as? EmojiCell else {
                 return UITableViewCell()
             }
-                
+            
             cell.delegate = self
             cell.configureCell()
             
@@ -355,7 +361,7 @@ private extension CreateHabitViewController {
         
         var stringResult = ""
         if arr.count == 7 {
-            stringResult = "Каждый день"
+            stringResult = NSLocalizedString("everyDay", tableName: "LocalizableStr", comment: "")
         } else {
             let filter = arr.map { $0.shortDayName }
             stringResult = filter.joined(separator: ", ")

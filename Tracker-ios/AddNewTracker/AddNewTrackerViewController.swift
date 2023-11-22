@@ -16,7 +16,7 @@ final class AddNewTrackerViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
-        label.text = "Создание трекера"
+        label.text = NSLocalizedString("mes7", tableName: "LocalizableStr", comment: "")
         label.font = .systemFont(ofSize: 16, weight: .medium)
         label.textColor = UIColor.ypBlack
         
@@ -26,7 +26,10 @@ final class AddNewTrackerViewController: UIViewController {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         
-        button.setTitle("Привычка", for: .normal)
+        button.setTitle(
+            NSLocalizedString("habit", tableName: "LocalizableStr", comment: ""),
+            for: .normal
+        )
         button.addTarget(self, action: #selector(createHabit), for: .touchUpInside)
         button.backgroundColor = UIColor.ypBlack
         button.layer.cornerRadius = 16
@@ -37,7 +40,10 @@ final class AddNewTrackerViewController: UIViewController {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         
-        button.setTitle("Нерегулярное событие", for: .normal)
+        button.setTitle(
+            NSLocalizedString("irregularEvent", tableName: "LocalizableStr", comment: ""),
+            for: .normal
+        )
         button.addTarget(self, action: #selector(createEvent), for: .touchUpInside)
         button.backgroundColor = UIColor.ypBlack
         button.layer.cornerRadius = 16

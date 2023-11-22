@@ -38,7 +38,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
-        label.text = "0 дней"
+        label.text = NSLocalizedString("mes6", tableName: "LocalizableStr", comment: "")
         label.textColor = UIColor.ypBlack
         label.font = .systemFont(ofSize: 12, weight: .medium)
         

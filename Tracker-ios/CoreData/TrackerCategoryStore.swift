@@ -10,7 +10,7 @@ import CoreData
 
 //MARK: - Protocols
 protocol TrackerCategoryStoreDelegate: AnyObject {
-    func store(_ categoryStore: TrackerCategoryStore, didUpdate update: TrackerStoreUpdate)
+    func store(_ categoryStore: TrackerCategoryStore, didUpdate update: TrackerCategoryStoreUpdate)
 }
 
 //MARK: - TrackerCategoryStore
@@ -26,7 +26,7 @@ final class TrackerCategoryStore: NSObject {
     private var insertedIndexes: IndexSet?
     private var deletedIndexes: IndexSet?
     private var updatedIndexes: IndexSet?
-    private var movedIndexes: Set<TrackerStoreUpdate.Move>?
+    private var movedIndexes: Set<TrackerCategoryStoreUpdate.Move>?
     
     //MARK: - Initialization
     convenience override init() {
@@ -93,7 +93,7 @@ extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
         insertedIndexes = IndexSet()
         deletedIndexes = IndexSet()
         updatedIndexes = IndexSet()
-        movedIndexes = Set<TrackerStoreUpdate.Move>()
+        movedIndexes = Set<TrackerCategoryStoreUpdate.Move>()
     }
     
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
@@ -105,7 +105,7 @@ extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
         }
         delegate?.store(
             self,
-            didUpdate: TrackerStoreUpdate(
+            didUpdate: TrackerCategoryStoreUpdate(
                 insertedIndexes: insertedIndexes,
                 deletedIndexes: deletedIndexes,
                 updatedIndexes: updatedIndexes,

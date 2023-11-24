@@ -157,6 +157,7 @@ class TrackerViewController: UIViewController {
         super.viewDidLoad()
         
         categoryStore.delegate = self
+        trackerStore.delegate = self
         updateCategories()
         setUpView()
     }
@@ -191,9 +192,18 @@ extension TrackerViewController: UITextFieldDelegate {
 
 //MARK: - TrackerCategoryStoreDelegate
 extension TrackerViewController: TrackerCategoryStoreDelegate {
-    func store(_ store: TrackerCategoryStore, didUpdate update: TrackerStoreUpdate) {
+    func store(_ store: TrackerCategoryStore, didUpdate update: TrackerCategoryStoreUpdate) {
         updateCategories()
         collectionView.reloadData()
+    }
+}
+
+//MARK: - TrackerStoreDelegate
+extension TrackerViewController: TrackerStoreDelegate {
+    func store(_ store: TrackerStore, didUpdate update: TrackerStoreUpdate) {
+        updateCategories()
+        collectionView.reloadData()
+        changeVisibility()
     }
 }
 
@@ -216,9 +226,9 @@ extension TrackerViewController: TrackerViewControllerDelegate {
         
         try? trackerStore.addNewTracker(tracker: newTracker, category: category)
         
-        updateCategories()
-        collectionView.reloadData()
-        changeVisibility()
+//        updateCategories()
+//        collectionView.reloadData()
+//        changeVisibility()
         
         dismiss(animated: true)
     }
@@ -274,21 +284,22 @@ extension TrackerViewController: UICollectionViewDelegate {
         return visibleCategories.count
     }
     
-//    func collectionView(
-//        _ collectionView: UICollectionView,
-//        contextMenuConfigurationForItemAt indexPath: IndexPath,
-//        point: CGPoint
-//    ) -> UIContextMenuConfiguration? {
-//
-//        let id = "\(indexPath.row):\(indexPath.section)" as NSString
-//        let contextMenu = UIContextMenuConfiguration(identifier: id, previewProvider: nil) { [weak self] _ in
-//            guard let self = self else { return UIMenu() }
-//
-//            return self.createContextMenu(indexPath: indexPath)
-//        }
-//
-//        return contextMenu
-//    }
+    func collectionView(
+        _ collectionView: UICollectionView,
+        contextMenuConfigurationForItemAt indexPath: IndexPath,
+        point: CGPoint
+    ) -> UIContextMenuConfiguration? {
+
+        let id = "\(indexPath.row):\(indexPath.section)" as NSString
+        let contextMenuConfiguration = UIContextMenuConfiguration(identifier: id, previewProvider: nil) { [weak self] _ in
+            guard let self = self else { return UIMenu() }
+
+            let tracker = visibleCategories[indexPath.section].trackers[indexPath.row]
+            return self.configureContextMenu(tracker: tracker)
+        }
+
+        return contextMenuConfiguration
+    }
     
 //    func collectionView(
 //        _ collectionView: UICollectionView,
@@ -544,5 +555,13 @@ private extension TrackerViewController {
             }
         }
         return result
+    }
+    
+    func configureContextMenu(tracker: Tracker) -> UIMenu {
+        let pin = UIAction(title: "Закрепить", image: nil) { _ in
+            print("pin")
+        }
+        
+        return UIMenu(children: [pin])
     }
 }

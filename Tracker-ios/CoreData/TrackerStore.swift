@@ -7,15 +7,25 @@
 import CoreData
 import UIKit
 
+//MARK: - Protocols
+protocol TrackerStoreDelegate: AnyObject {
+    func store(_ categoryStore: TrackerStore, didUpdate update: TrackerStoreUpdate)
+}
+
 final class TrackerStore: NSObject {
     //MARK: - Public variables
     static let shared = TrackerStore()
+    weak var delegate: TrackerStoreDelegate?
     
     //MARK: - Private variables
     private let context: NSManagedObjectContext
     private var fetchedResultController: NSFetchedResultsController<TrackerCoreData>?
     private let daysValueTransformer = DaysValueTransformer.shared
     private let trackerCaregoryStore = TrackerCategoryStore.shared
+    private var insertedIndexes: IndexSet?
+    private var deletedIndexes: IndexSet?
+    private var updatedIndexes: IndexSet?
+    private var movedIndexes: Set<TrackerStoreUpdate.Move>?
     
     //MARK: - Initialization
     convenience override init() {
@@ -36,6 +46,7 @@ final class TrackerStore: NSObject {
             sectionNameKeyPath: nil,
             cacheName: nil
         )
+        resultController.delegate = self
         self.fetchedResultController = resultController
         try? resultController.performFetch()
     }
@@ -52,6 +63,64 @@ final class TrackerStore: NSObject {
         guard let categoryCoreData = categoryCoreData.first else { throw TrackerBaseError.error }
         
         addTrackerTo(tracker, categoryCoreData: categoryCoreData)
+    }
+}
+
+//MARK: - NSFetchedResultsControllerDelegate
+extension TrackerStore: NSFetchedResultsControllerDelegate {
+    
+    func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        insertedIndexes = IndexSet()
+        deletedIndexes = IndexSet()
+        updatedIndexes = IndexSet()
+        movedIndexes = Set<TrackerStoreUpdate.Move>()
+    }
+
+    func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+        guard let insertedIndexes = insertedIndexes,
+              let deletedIndexes = deletedIndexes,
+              let updatedIndexes = updatedIndexes,
+              let movedIndexes = movedIndexes else {
+            return
+        }
+        delegate?.store(
+            self,
+            didUpdate: TrackerStoreUpdate(
+                insertedIndexes: insertedIndexes,
+                deletedIndexes: deletedIndexes,
+                updatedIndexes: updatedIndexes,
+                movedIndexes: movedIndexes
+            )
+        )
+        self.insertedIndexes = nil
+        self.deletedIndexes = nil
+        self.updatedIndexes = nil
+        self.movedIndexes = nil
+    }
+
+    func controller(
+        _ controller: NSFetchedResultsController<NSFetchRequestResult>,
+        didChange anObject: Any,
+        at indexPath: IndexPath?,
+        for type: NSFetchedResultsChangeType,
+        newIndexPath: IndexPath?
+    ) {
+        switch type {
+            case .insert:
+                guard let indexPath = newIndexPath else { fatalError() }
+                insertedIndexes?.insert(indexPath.item)
+            case .delete:
+                guard let indexPath = indexPath else { fatalError() }
+                deletedIndexes?.insert(indexPath.item)
+            case .update:
+                guard let indexPath = indexPath else { fatalError() }
+                updatedIndexes?.insert(indexPath.item)
+            case .move:
+                guard let oldIndexPath = indexPath, let newIndexPath = newIndexPath else { fatalError() }
+                movedIndexes?.insert(.init(oldIndex: oldIndexPath.item, newIndex: newIndexPath.item))
+            @unknown default:
+                fatalError()
+        }
     }
 }
 

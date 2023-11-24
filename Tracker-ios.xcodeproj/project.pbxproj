@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		70EB59BE652157966B35CC2D /* Pods_Tracker_ios.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E0CDAC814F9C9D6C34F89ECE /* Pods_Tracker_ios.framework */; };
+		D50816E02B10CBA70092D57E /* TrackerStoreUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50816DF2B10CBA70092D57E /* TrackerStoreUpdate.swift */; };
 		D519FD452B1087CD0000301D /* AnalyticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D519FD442B1087CC0000301D /* AnalyticsService.swift */; };
 		D547B56F2AFCFEC8004BA3A3 /* OnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D547B56E2AFCFEC8004BA3A3 /* OnboardingViewController.swift */; };
 		D547B5712B0209DE004BA3A3 /* OnboardingPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D547B5702B0209DE004BA3A3 /* OnboardingPageViewController.swift */; };
@@ -48,13 +49,14 @@
 		D5F012C92AE90FEB00B3AB69 /* TrackerStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F012C82AE90FEB00B3AB69 /* TrackerStore.swift */; };
 		D5F012CB2AE90FF600B3AB69 /* TrackerCategoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F012CA2AE90FF600B3AB69 /* TrackerCategoryStore.swift */; };
 		D5F012CD2AE9100000B3AB69 /* TrackerRecordStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F012CC2AE9100000B3AB69 /* TrackerRecordStore.swift */; };
-		D5F4C1032AEAA4190011E834 /* TrackerStoreUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F4C1022AEAA4190011E834 /* TrackerStoreUpdate.swift */; };
+		D5F4C1032AEAA4190011E834 /* TrackerCategoryStoreUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F4C1022AEAA4190011E834 /* TrackerCategoryStoreUpdate.swift */; };
 		D5F4C1072AF2570C0011E834 /* Date+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F4C1062AF2570C0011E834 /* Date+Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		247DA389047CC88623E0092D /* Pods-Tracker-ios.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tracker-ios.debug.xcconfig"; path = "Target Support Files/Pods-Tracker-ios/Pods-Tracker-ios.debug.xcconfig"; sourceTree = "<group>"; };
 		4FCACB7867EDC6CD3E9DC160 /* Pods-Tracker-ios.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tracker-ios.release.xcconfig"; path = "Target Support Files/Pods-Tracker-ios/Pods-Tracker-ios.release.xcconfig"; sourceTree = "<group>"; };
+		D50816DF2B10CBA70092D57E /* TrackerStoreUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerStoreUpdate.swift; sourceTree = "<group>"; };
 		D519FD442B1087CC0000301D /* AnalyticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsService.swift; sourceTree = "<group>"; };
 		D547B56E2AFCFEC8004BA3A3 /* OnboardingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewController.swift; sourceTree = "<group>"; };
 		D547B5702B0209DE004BA3A3 /* OnboardingPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingPageViewController.swift; sourceTree = "<group>"; };
@@ -99,7 +101,7 @@
 		D5F012C82AE90FEB00B3AB69 /* TrackerStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerStore.swift; sourceTree = "<group>"; };
 		D5F012CA2AE90FF600B3AB69 /* TrackerCategoryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCategoryStore.swift; sourceTree = "<group>"; };
 		D5F012CC2AE9100000B3AB69 /* TrackerRecordStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerRecordStore.swift; sourceTree = "<group>"; };
-		D5F4C1022AEAA4190011E834 /* TrackerStoreUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerStoreUpdate.swift; sourceTree = "<group>"; };
+		D5F4C1022AEAA4190011E834 /* TrackerCategoryStoreUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCategoryStoreUpdate.swift; sourceTree = "<group>"; };
 		D5F4C1062AF2570C0011E834 /* Date+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extensions.swift"; sourceTree = "<group>"; };
 		E0CDAC814F9C9D6C34F89ECE /* Pods_Tracker_ios.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Tracker_ios.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -238,7 +240,8 @@
 				D59467912ACB00DE00BD76FB /* TrackerCategoryModel.swift */,
 				D59467932ACB00EA00BD76FB /* TrackerRecordModel.swift */,
 				D59467B12ACD7D8300BD76FB /* WeekDay.swift */,
-				D5F4C1022AEAA4190011E834 /* TrackerStoreUpdate.swift */,
+				D5F4C1022AEAA4190011E834 /* TrackerCategoryStoreUpdate.swift */,
+				D50816DF2B10CBA70092D57E /* TrackerStoreUpdate.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -431,6 +434,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D59467AA2ACC323000BD76FB /* CreateNewCategoryViewController.swift in Sources */,
+				D50816E02B10CBA70092D57E /* TrackerStoreUpdate.swift in Sources */,
 				D59467972ACBE92400BD76FB /* AddNewTrackerViewController.swift in Sources */,
 				D5F012BC2AE7C15E00B3AB69 /* DaysValueTransformer.swift in Sources */,
 				D59467B22ACD7D8300BD76FB /* WeekDay.swift in Sources */,
@@ -450,7 +454,7 @@
 				D59467942ACB00EA00BD76FB /* TrackerRecordModel.swift in Sources */,
 				D547B5952B023F41004BA3A3 /* SelectCategoryViewModel.swift in Sources */,
 				D5D189A72AD82220009F2D96 /* EmojiCollectionviewCell.swift in Sources */,
-				D5F4C1032AEAA4190011E834 /* TrackerStoreUpdate.swift in Sources */,
+				D5F4C1032AEAA4190011E834 /* TrackerCategoryStoreUpdate.swift in Sources */,
 				D5F012CD2AE9100000B3AB69 /* TrackerRecordStore.swift in Sources */,
 				D519FD452B1087CD0000301D /* AnalyticsService.swift in Sources */,
 				D59467882ACAAAAA00BD76FB /* StatisticsViewController.swift in Sources */,

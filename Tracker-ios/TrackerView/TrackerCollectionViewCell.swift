@@ -10,6 +10,9 @@ import UIKit
 final class TrackerCollectionViewCell: UICollectionViewCell {
     //MARK: - Public variables
     weak var delegate: TrackerCellDelegate?
+    var menuView: UIView {
+        return colorView
+    }
     
     //MARK: - Layout variables
     private lazy var emojiLabel: UILabel = {
@@ -74,6 +77,15 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         
         return stackView
     }()
+    private lazy var pinImageView: UIImageView = {
+        let image = UIImageView()
+        image.translatesAutoresizingMaskIntoConstraints = false
+        
+        image.image = UIImage(named: "PinImage")
+        image.isHidden = false
+        
+        return image
+    }()
     
     //MARK: - Private variables
     private var isCompleted: Bool = false
@@ -82,7 +94,15 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
     private var selectedDate: Date?
     
     //MARK: - Main function
-    func configureCell(tracker: Tracker, isCompleted: Bool, daysCount: Int, indexPath: IndexPath, selectedDate: Date) {
+    func configureCell(
+        tracker: Tracker,
+        isCompleted: Bool,
+        daysCount: Int,
+        indexPath: IndexPath,
+        selectedDate: Date,
+        pinned: Bool
+    ) {
+        
         self.prepareForReuse()
         
         self.isCompleted = isCompleted
@@ -100,6 +120,7 @@ final class TrackerCollectionViewCell: UICollectionViewCell {
         plusButton.backgroundColor = tracker.color
         emojiLabel.text = tracker.emoji
         nameLabel.text = tracker.name
+        pinImageView.isHidden = !pinned
         
         addSubViews()
         configureConstraints()
@@ -113,6 +134,7 @@ private extension TrackerCollectionViewCell {
         contentView.addSubview(colorView)
         colorView.addSubview(nameLabel)
         colorView.addSubview(emojiLabel)
+        colorView.addSubview(pinImageView)
         contentView.addSubview(quantityStackView)
         quantityStackView.addArrangedSubview(daysLabel)
         quantityStackView.addArrangedSubview(plusButton)
@@ -129,6 +151,11 @@ private extension TrackerCollectionViewCell {
             emojiLabel.heightAnchor.constraint(equalToConstant: 26),
             emojiLabel.topAnchor.constraint(equalTo: colorView.topAnchor, constant: 12),
             emojiLabel.leadingAnchor.constraint(equalTo: colorView.leadingAnchor, constant: 12),
+            
+            pinImageView.heightAnchor.constraint(equalToConstant: 12),
+            pinImageView.widthAnchor.constraint(equalToConstant: 8),
+            pinImageView.topAnchor.constraint(equalTo: colorView.topAnchor, constant: 18),
+            pinImageView.trailingAnchor.constraint(equalTo: colorView.trailingAnchor, constant: -12),
             
             nameLabel.heightAnchor.constraint(equalToConstant: 34),
             nameLabel.leadingAnchor.constraint(equalTo: emojiLabel.leadingAnchor),

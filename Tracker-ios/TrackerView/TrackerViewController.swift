@@ -242,7 +242,8 @@ extension TrackerViewController: UICollectionViewDataSource {
             isCompleted: isTrackerComleted(tracker.id),
             daysCount: getComletedCount(id: tracker.id),
             indexPath: indexPath,
-            selectedDate: datePicker.date
+            selectedDate: datePicker.date,
+            pinned: false
         )
         
         return cell
@@ -268,10 +269,49 @@ extension TrackerViewController: UICollectionViewDataSource {
 }
 
 //MARK: - UICollectionViewDelegate
-extension TrackerViewController: UICollectionViewDelegate{
+extension TrackerViewController: UICollectionViewDelegate {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return visibleCategories.count
     }
+    
+//    func collectionView(
+//        _ collectionView: UICollectionView,
+//        contextMenuConfigurationForItemAt indexPath: IndexPath,
+//        point: CGPoint
+//    ) -> UIContextMenuConfiguration? {
+//
+//        let id = "\(indexPath.row):\(indexPath.section)" as NSString
+//        let contextMenu = UIContextMenuConfiguration(identifier: id, previewProvider: nil) { [weak self] _ in
+//            guard let self = self else { return UIMenu() }
+//
+//            return self.createContextMenu(indexPath: indexPath)
+//        }
+//
+//        return contextMenu
+//    }
+    
+//    func collectionView(
+//        _ collectionView: UICollectionView,
+//        previewForHighlightingContextMenuWithConfiguration configuration: UIContextMenuConfiguration
+//    ) -> UITargetedPreview? {
+//
+//        guard let identifier = configuration.identifier as? String else { return nil }
+//        let components = identifier.components(separatedBy: ":")
+//
+//        guard let first = components.first,
+//              let last = components.last,
+//              let row = Int(first),
+//              let section = Int(last) else {
+//            return nil
+//        }
+//        let indexPath = IndexPath(row: row, section: section)
+//
+//        guard let cell = collectionView.cellForItem(at: indexPath) as? TrackerCollectionViewCell else {
+//            return nil
+//        }
+//
+//        return UITargetedPreview(view: cell.menuView)
+//    }
 }
 
 //MARK: - UICollectionViewDelegateFlowLayout

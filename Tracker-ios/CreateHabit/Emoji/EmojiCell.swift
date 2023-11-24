@@ -46,6 +46,7 @@ final class EmojiCell: UITableViewCell {
     
     //MARK: - Main function
     func configureCell() {
+        contentView.backgroundColor = UIColor.ypWhite
         selectionStyle = .none
         
         addSubViews()

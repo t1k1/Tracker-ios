@@ -47,6 +47,7 @@ final class ColorsCell: UITableViewCell {
     
     //MARK: - Main function
     func configureCell() {
+        contentView.backgroundColor = UIColor.ypWhite
         selectionStyle = .none
         
         addSubViews()

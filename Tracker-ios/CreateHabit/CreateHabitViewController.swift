@@ -251,7 +251,7 @@ extension CreateHabitViewController: ColorsCellDelegate {
 private extension CreateHabitViewController {
     //MARK: - Configurating functions
     func setUpView() {
-        view.backgroundColor = UIColor.white
+        view.backgroundColor = UIColor.ypWhite
         
         configureTableView()
         addSubViews()

@@ -33,6 +33,7 @@ final class CreateHabitViewController: UIViewController {
     //MARK: - Public variables
     weak var delegate: TrackerViewControllerDelegate?
     var tableCellNames: Dictionary<Int, [String]>?
+    var editTracker: Tracker?
     
     //MARK: - Layout variables
     private lazy var headerLabel: UILabel = {
@@ -253,6 +254,10 @@ private extension CreateHabitViewController {
     func setUpView() {
         view.backgroundColor = UIColor.ypWhite
         
+        if let editTracker = editTracker {
+            
+        }
+        
         configureTableView()
         addSubViews()
         configureConstraints()
@@ -384,7 +389,8 @@ private extension CreateHabitViewController {
                 sheduleArr: sheduleArr,
                 habitName: habitName,
                 emoji: emoji,
-                color: color
+                color: color,
+                pinned: false
             )
             
             guard let window = UIApplication.shared.windows.first,

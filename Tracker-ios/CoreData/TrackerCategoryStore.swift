@@ -174,6 +174,7 @@ private extension TrackerCategoryStore {
                     name: name,
                     color: color,
                     emoji: emoji,
+                    pinned: trackerCoreData.pinned,
                     shedule: daysValueTransformer.stringToWeekDays(strShedule)
                 )
             )

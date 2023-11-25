@@ -14,7 +14,8 @@ protocol TrackerViewControllerDelegate: AnyObject {
         sheduleArr: [WeekDay],
         habitName: String,
         emoji: String,
-        color: UIColor
+        color: UIColor,
+        pinned: Bool
     )
 }
 protocol TrackerCellDelegate: AnyObject {
@@ -150,6 +151,7 @@ class TrackerViewController: UIViewController {
     private var categories: [TrackerCategory] = []
     private var completedTrackers: [TrackerRecord] = []
     private var visibleCategories: [TrackerCategory] = []
+    private var pinnedTrackers: [Tracker] = []
     private var currentDate: Date?
    
     //MARK: - Lyfecycle
@@ -214,21 +216,19 @@ extension TrackerViewController: TrackerViewControllerDelegate {
         sheduleArr: [WeekDay],
         habitName: String,
         emoji: String,
-        color: UIColor
+        color: UIColor,
+        pinned: Bool
     ) {
         let newTracker = Tracker(
             id: UUID(),
             name: habitName,
             color: color,
             emoji: emoji,
+            pinned: pinned,
             shedule: sheduleArr
         )
         
         try? trackerStore.addNewTracker(tracker: newTracker, category: category)
-        
-//        updateCategories()
-//        collectionView.reloadData()
-//        changeVisibility()
         
         dismiss(animated: true)
     }
@@ -253,7 +253,7 @@ extension TrackerViewController: UICollectionViewDataSource {
             daysCount: getComletedCount(id: tracker.id),
             indexPath: indexPath,
             selectedDate: datePicker.date,
-            pinned: false
+            pinned: tracker.pinned
         )
         
         return cell
@@ -301,28 +301,28 @@ extension TrackerViewController: UICollectionViewDelegate {
         return contextMenuConfiguration
     }
     
-//    func collectionView(
-//        _ collectionView: UICollectionView,
-//        previewForHighlightingContextMenuWithConfiguration configuration: UIContextMenuConfiguration
-//    ) -> UITargetedPreview? {
-//
-//        guard let identifier = configuration.identifier as? String else { return nil }
-//        let components = identifier.components(separatedBy: ":")
-//
-//        guard let first = components.first,
-//              let last = components.last,
-//              let row = Int(first),
-//              let section = Int(last) else {
-//            return nil
-//        }
-//        let indexPath = IndexPath(row: row, section: section)
-//
-//        guard let cell = collectionView.cellForItem(at: indexPath) as? TrackerCollectionViewCell else {
-//            return nil
-//        }
-//
-//        return UITargetedPreview(view: cell.menuView)
-//    }
+    func collectionView(
+        _ collectionView: UICollectionView,
+        previewForHighlightingContextMenuWithConfiguration configuration: UIContextMenuConfiguration
+    ) -> UITargetedPreview? {
+
+        guard let identifier = configuration.identifier as? String else { return nil }
+        let components = identifier.components(separatedBy: ":")
+
+        guard let first = components.first,
+              let last = components.last,
+              let row = Int(first),
+              let section = Int(last) else {
+            return nil
+        }
+        let indexPath = IndexPath(row: row, section: section)
+
+        guard let cell = collectionView.cellForItem(at: indexPath) as? TrackerCollectionViewCell else {
+            return nil
+        }
+
+        return UITargetedPreview(view: cell.menuView)
+    }
 }
 
 //MARK: - UICollectionViewDelegateFlowLayout
@@ -534,6 +534,12 @@ private extension TrackerViewController {
         
         guard let completedTrackers = try? recordStore.fetchTrackerRecords() else { return }
         self.completedTrackers = completedTrackers
+        
+        guard let pinnedTrackers = try? trackerStore.fetchPinnedTrackers() else { return }
+        self.pinnedTrackers = pinnedTrackers
+        
+        showPinnedTrackers()
+        
         showFilteredTrackersByDay()
     }
     
@@ -558,10 +564,66 @@ private extension TrackerViewController {
     }
     
     func configureContextMenu(tracker: Tracker) -> UIMenu {
-        let pin = UIAction(title: "Закрепить", image: nil) { _ in
-            print("pin")
+        let titlePin = tracker.pinned ? "Открепить" : "Закрепить"
+        let pin = UIAction(title: titlePin, image: nil) { [weak self] _ in
+            guard let self = self else { return }
+            try? self.trackerStore.changePinTracker(tracker)
         }
         
-        return UIMenu(children: [pin])
+        let edit = UIAction(title: "Редактировать", image: nil) { [weak self] _ in
+            guard let self = self else { return }
+            self.openEditViewController(for: tracker)
+        }
+        
+        return UIMenu(children: [pin, edit])
+    }
+    
+    func showPinnedTrackers() {
+        let headerPinned = "Закрепленные"
+        let indexPinnedCategory = categories.firstIndex { category in
+            category.header == headerPinned
+        }
+        
+        if let indexPinnedCategory = indexPinnedCategory {
+            categories.remove(at: indexPinnedCategory)
+        }
+        
+        if !pinnedTrackers.isEmpty {
+            var nonPinned: [TrackerCategory] = []
+            categories.forEach { category in
+                let trackers = category.trackers.filter { tracker in
+                    !tracker.pinned
+                }
+                
+                nonPinned.append(
+                    TrackerCategory(
+                        header: category.header,
+                        trackers: trackers
+                    )
+                )
+            }
+            categories = nonPinned
+            categories.insert(
+                TrackerCategory(
+                    header: headerPinned,
+                    trackers: pinnedTrackers
+                ), at: 0)
+        }
+    }
+    
+    func openEditViewController(for tracker: Tracker) {
+        let editViewController = CreateHabitViewController()
+        
+        editViewController.editTracker = tracker
+        editViewController.delegate = self
+        editViewController.tableCellNames = [
+            0: ["textField"],
+            1: ["category","shedule"],
+            2: ["emoji"],
+            3: ["colors"]
+        ]
+        
+        let navigatonViewController = UINavigationController(rootViewController: editViewController)
+        present(navigatonViewController, animated: true)
     }
 }

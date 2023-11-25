@@ -64,6 +64,50 @@ final class TrackerStore: NSObject {
         
         addTrackerTo(tracker, categoryCoreData: categoryCoreData)
     }
+    
+    func changePinTracker(_ tracker: Tracker) throws {
+        let fetchedTracker = fetchedResultController?.fetchedObjects?.first {
+            $0.id == tracker.id
+        }
+        guard let fetchedTracker = fetchedTracker else { return }
+        
+        fetchedTracker.pinned = !(fetchedTracker.pinned)
+        CoreDataStack.shared.saveContext(context)
+        try? fetchedResultController?.performFetch()
+    }
+    
+    func fetchPinnedTrackers() throws -> [Tracker] {
+        var pinnedTrackers: [Tracker] = []
+        
+        let fetchRequest = TrackerCoreData.fetchRequest()
+        fetchRequest.predicate = NSPredicate(
+            format: "pinned == true"
+        )
+        
+        let trackerCoreData = try context.fetch(fetchRequest)
+        trackerCoreData.forEach { trackerCoreData in
+            guard let id = trackerCoreData.id,
+                  let name = trackerCoreData.name,
+                  let color = trackerCoreData.color as? UIColor,
+                  let emoji = trackerCoreData.emoji,
+                  let strShedule = trackerCoreData.shedule else {
+                return
+            }
+            
+            pinnedTrackers.append(
+                Tracker(
+                    id: id,
+                    name: name,
+                    color: color,
+                    emoji: emoji,
+                    pinned: trackerCoreData.pinned,
+                    shedule: daysValueTransformer.stringToWeekDays(strShedule)
+                )
+            )
+        }
+        
+        return pinnedTrackers
+    }
 }
 
 //MARK: - NSFetchedResultsControllerDelegate
@@ -132,6 +176,7 @@ private extension TrackerStore {
         trackerCoreData.color = tracker.color
         trackerCoreData.emoji = tracker.emoji
         trackerCoreData.name = tracker.name
+        trackerCoreData.pinned = tracker.pinned
         trackerCoreData.shedule = daysValueTransformer.weekDaysToString(tracker.shedule)
         
         categoryCoreData.addToTrackers(trackerCoreData)

@@ -17,6 +17,14 @@ protocol TrackerViewControllerDelegate: AnyObject {
         color: UIColor,
         pinned: Bool
     )
+    func updateTracker(
+        categoryName: String,
+        shedule: [WeekDay],
+        name: String,
+        emoji: String,
+        color: UIColor,
+        id: UUID
+    )
 }
 protocol TrackerCellDelegate: AnyObject {
     func updateTrackerRecord(id: UUID, isCompleted: Bool, indexPath: IndexPath)
@@ -230,6 +238,18 @@ extension TrackerViewController: TrackerViewControllerDelegate {
         
         try? trackerStore.addNewTracker(tracker: newTracker, category: category)
         
+        dismiss(animated: true)
+    }
+    
+    func updateTracker(
+        categoryName: String,
+        shedule: [WeekDay],
+        name: String,
+        emoji: String,
+        color: UIColor,
+        id: UUID
+    ) {
+        try? trackerStore.updateTracker(categoryName: categoryName, shedule: shedule, name: name, emoji: emoji, color: color, id: id)
         dismiss(animated: true)
     }
 }
@@ -572,7 +592,7 @@ private extension TrackerViewController {
         
         let edit = UIAction(title: "Редактировать", image: nil) { [weak self] _ in
             guard let self = self else { return }
-            self.openEditViewController(for: tracker)
+            self.openEditViewController(for: tracker, daysCount: getComletedCount(id: tracker.id))
         }
         
         return UIMenu(children: [pin, edit])
@@ -611,10 +631,11 @@ private extension TrackerViewController {
         }
     }
     
-    func openEditViewController(for tracker: Tracker) {
+    func openEditViewController(for tracker: Tracker, daysCount: Int) {
         let editViewController = CreateHabitViewController()
         
         editViewController.editTracker = tracker
+        editViewController.editCount = daysCount
         editViewController.delegate = self
         editViewController.tableCellNames = [
             0: ["textField"],

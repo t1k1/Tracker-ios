@@ -10,6 +10,7 @@ import UIKit
 final class TextFieldCell: UITableViewCell {
     //MARK: - Public variables
     weak var delegate: TextFieldDelegate?
+    var text: String?
     
     //MARK: - Layout variables
     private lazy var nameHabitTextField: UITextField = {
@@ -29,6 +30,8 @@ final class TextFieldCell: UITableViewCell {
     func configureCell() {
         contentView.backgroundColor = UIColor.ypBackground
         selectionStyle = .none
+        
+        nameHabitTextField.text = text ?? ""
         
         addSubViews()
         configureConstraints()

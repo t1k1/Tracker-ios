@@ -10,6 +10,7 @@ import UIKit
 final class ColorsCell: UITableViewCell {
     //MARK: - Public variables
     var delegate: ColorsCellDelegate?
+    var selectedColor: UIColor?
     
     //MARK: - Layout variables
     private lazy var headerLabel: UILabel = {
@@ -66,6 +67,12 @@ extension ColorsCell: UICollectionViewDataSource {
         guard let cell = cell else { return UICollectionViewCell() }
         
         cell.configureCell(color: colors[indexPath.row])
+        
+        if let selectedColor = selectedColor,
+           selectedColor.cgColor == colors[indexPath.row].cgColor {
+            colorsCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: UICollectionView.ScrollPosition.centeredHorizontally)
+            addBorder(cell: cell, color: selectedColor)
+        }
         
         return cell
     }

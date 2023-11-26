@@ -8,6 +8,8 @@
 import UIKit
 
 final class CategorySheduleCell: UITableViewCell {
+    var category: TrackerCategory?
+    
     //MARK: - Layout variables
     private lazy var titleLabel: UILabel = {
         let label = UILabel()

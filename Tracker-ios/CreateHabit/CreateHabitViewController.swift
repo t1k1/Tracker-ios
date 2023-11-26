@@ -34,6 +34,7 @@ final class CreateHabitViewController: UIViewController {
     weak var delegate: TrackerViewControllerDelegate?
     var tableCellNames: Dictionary<Int, [String]>?
     var editTracker: Tracker?
+    var editCount: Int?
     
     //MARK: - Layout variables
     private lazy var headerLabel: UILabel = {
@@ -89,8 +90,36 @@ final class CreateHabitViewController: UIViewController {
         
         return button
     }()
+    private lazy var saveButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        button.setTitle(
+            "Cохранить",
+            for: .normal
+        )
+        button.addTarget(self, action: #selector(save), for: .touchUpInside)
+        button.backgroundColor = UIColor.ypBlack
+        button.isEnabled = true
+        button.setTitleColor(UIColor.ypWhite, for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
+        button.layer.cornerRadius = 16
+        
+        return button
+    }()
+    private lazy var countLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        label.text = "0 дней"
+        label.font = .systemFont(ofSize: 32, weight: .bold)
+        label.textColor = UIColor.ypBlack
+        
+        return label
+    }()
     
     //MARK: - Private variables
+    private let categoryStore = TrackerCategoryStore.shared
     private var category: TrackerCategory?
     private var sheduleArr: [WeekDay]?
     private var habitName: String?
@@ -137,6 +166,7 @@ extension CreateHabitViewController: UITableViewDataSource {
             ) as? TextFieldCell else {
                 return UITableViewCell()
             }
+            cell.text = editTracker?.name
             cell.delegate = self
             cell.configureCell()
             
@@ -171,6 +201,7 @@ extension CreateHabitViewController: UITableViewDataSource {
                 return UITableViewCell()
             }
             
+            cell.selectedEmoji = self.emoji
             cell.delegate = self
             cell.configureCell()
             
@@ -184,6 +215,7 @@ extension CreateHabitViewController: UITableViewDataSource {
                 return UITableViewCell()
             }
             
+            cell.selectedColor = self.color
             cell.delegate = self
             cell.configureCell()
             
@@ -254,8 +286,16 @@ private extension CreateHabitViewController {
     func setUpView() {
         view.backgroundColor = UIColor.ypWhite
         
-        if let editTracker = editTracker {
+        if let editTracker = editTracker,
+           let editCount = editCount {
+            headerLabel.text = "Редактирование привычки"
+            countLabel.text = "\(editCount) дней"
             
+            self.category = categoryForTracker(editTracker)
+            self.sheduleArr = editTracker.shedule
+            self.habitName = editTracker.name
+            self.emoji = editTracker.emoji
+            self.color = editTracker.color
         }
         
         configureTableView()
@@ -276,7 +316,12 @@ private extension CreateHabitViewController {
         view.addSubview(headerLabel)
         view.addSubview(tableView)
         view.addSubview(cancelButton)
-        view.addSubview(createButton)
+        if let _ = editCount {
+            view.addSubview(saveButton)
+            view.addSubview(countLabel)
+        } else {
+            view.addSubview(createButton)
+        }
     }
     
     func configureConstraints() {
@@ -284,22 +329,46 @@ private extension CreateHabitViewController {
             headerLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             headerLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 26),
             headerLabel.heightAnchor.constraint(equalToConstant: 22),
-            
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: cancelButton.topAnchor),
-            tableView.topAnchor.constraint(equalTo: headerLabel.bottomAnchor),
-            
-            cancelButton.heightAnchor.constraint(equalToConstant: 60),
-            cancelButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            cancelButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -32),
-            cancelButton.trailingAnchor.constraint(equalTo: view.centerXAnchor, constant: -4),
-            
-            createButton.heightAnchor.constraint(equalToConstant: 60),
-            createButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            createButton.leadingAnchor.constraint(equalTo: view.centerXAnchor, constant: 4),
-            createButton.bottomAnchor.constraint(equalTo: cancelButton.bottomAnchor)
         ])
+        
+        if let _ = editCount {
+            NSLayoutConstraint.activate([
+                countLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+                countLabel.topAnchor.constraint(equalTo: headerLabel.bottomAnchor, constant: 24),
+                
+                tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                tableView.bottomAnchor.constraint(equalTo: cancelButton.topAnchor),
+                tableView.topAnchor.constraint(equalTo: countLabel.bottomAnchor),
+                
+                cancelButton.heightAnchor.constraint(equalToConstant: 60),
+                cancelButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+                cancelButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -32),
+                cancelButton.trailingAnchor.constraint(equalTo: view.centerXAnchor, constant: -4),
+                
+                saveButton.heightAnchor.constraint(equalToConstant: 60),
+                saveButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+                saveButton.leadingAnchor.constraint(equalTo: view.centerXAnchor, constant: 4),
+                saveButton.bottomAnchor.constraint(equalTo: cancelButton.bottomAnchor)
+            ])
+        } else {
+            NSLayoutConstraint.activate([
+                tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                tableView.bottomAnchor.constraint(equalTo: cancelButton.topAnchor),
+                tableView.topAnchor.constraint(equalTo: headerLabel.bottomAnchor),
+                
+                cancelButton.heightAnchor.constraint(equalToConstant: 60),
+                cancelButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+                cancelButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -32),
+                cancelButton.trailingAnchor.constraint(equalTo: view.centerXAnchor, constant: -4),
+                
+                createButton.heightAnchor.constraint(equalToConstant: 60),
+                createButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+                createButton.leadingAnchor.constraint(equalTo: view.centerXAnchor, constant: 4),
+                createButton.bottomAnchor.constraint(equalTo: cancelButton.bottomAnchor)
+            ])
+        }
     }
     
     func  fillSheduleIfRequired() {
@@ -374,6 +443,11 @@ private extension CreateHabitViewController {
         return stringResult
     }
     
+    func categoryForTracker(_ tracker: Tracker) -> TrackerCategory? {
+        guard let category = try? categoryStore.fetchCategory(forTracker: tracker) else { return nil }
+        return category
+    }
+    
     //MARK: - Buttons functions
     @objc
     func create() {
@@ -405,5 +479,33 @@ private extension CreateHabitViewController {
     @objc
     func cancel() {
         dismiss(animated: true)
+    }
+    
+    @objc
+    func save() {
+        if let sheduleArr = sheduleArr,
+           let habitName = habitName,
+           let color = color,
+           let emoji = emoji,
+           let delegate = delegate,
+           let editTracker = editTracker,
+           let category = category {
+            
+            delegate.updateTracker(
+                categoryName: category.header,
+                shedule: sheduleArr,
+                name: habitName,
+                emoji: emoji,
+                color: color,
+                id: editTracker.id
+            )
+            
+            guard let window = UIApplication.shared.windows.first,
+                  let rootViewController = window.rootViewController else {
+                assertionFailure("Invalid Configuration")
+                return
+            }
+            rootViewController.dismiss(animated: true, completion: nil)
+        }
     }
 }

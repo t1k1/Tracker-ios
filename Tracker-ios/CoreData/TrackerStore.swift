@@ -65,6 +65,22 @@ final class TrackerStore: NSObject {
         addTrackerTo(tracker, categoryCoreData: categoryCoreData)
     }
     
+    func updateTracker(categoryName: String, shedule: [WeekDay], name: String, emoji: String, color: UIColor, id: UUID) throws {
+        guard let fetchedResultController = fetchedResultController else { return }
+        let tracker = fetchedResultController.fetchedObjects?.first { $0.id == id }
+        
+        guard let tracker = tracker else { return }
+        tracker.shedule = daysValueTransformer.weekDaysToString(shedule)
+        tracker.emoji = emoji
+        tracker.color = color
+        tracker.name = name
+        if tracker.category?.header != categoryName {
+            tracker.category = try trackerCaregoryStore.fetchCategoriesCoreData(categoryName: categoryName).first
+        }
+        
+        CoreDataStack.shared.saveContext(context)
+    }
+    
     func changePinTracker(_ tracker: Tracker) throws {
         let fetchedTracker = fetchedResultController?.fetchedObjects?.first {
             $0.id == tracker.id

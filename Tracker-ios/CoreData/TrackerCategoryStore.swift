@@ -84,6 +84,18 @@ final class TrackerCategoryStore: NSObject {
         guard let fetchedResultController = fetchedResultController else { return }
         try? fetchedResultController.performFetch()
     }
+    
+    func fetchCategory(forTracker tracker: Tracker) throws -> TrackerCategory? {
+        let fetchRequest = TrackerCategoryCoreData.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "ANY trackers.id == %@", tracker.id.uuidString)
+        
+        guard let trackerCategoriesCoreData = try? context.fetch(fetchRequest),
+              let trackerCategoryCoreData = trackerCategoriesCoreData.first else {
+            return nil
+        }
+    
+        return try convertToTrackerCategory(data: trackerCategoryCoreData)
+    }
 }
 
 //MARK: - NSFetchedResultsControllerDelegate

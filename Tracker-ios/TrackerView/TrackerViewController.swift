@@ -595,7 +595,12 @@ private extension TrackerViewController {
             self.openEditViewController(for: tracker, daysCount: getComletedCount(id: tracker.id))
         }
         
-        return UIMenu(children: [pin, edit])
+        let delete = UIAction(title: "Удалить", image: nil, attributes: .destructive) { [weak self] _ in
+            guard let self = self else { return }
+            self.showDeleteAlert(for: tracker)
+        }
+        
+        return UIMenu(children: [pin, edit, delete])
     }
     
     func showPinnedTrackers() {
@@ -646,5 +651,24 @@ private extension TrackerViewController {
         
         let navigatonViewController = UINavigationController(rootViewController: editViewController)
         present(navigatonViewController, animated: true)
+    }
+    
+    func showDeleteAlert(for tracker: Tracker) {
+        let alert = UIAlertController(
+            title: "Уверены, что хотите удалить трекер?",
+            message: nil,
+            preferredStyle: .actionSheet
+        )
+        alert.addAction(UIAlertAction(title: "Удалить",
+                                      style: .destructive) { [weak self] _ in
+            try? self?.trackerStore.deleteTracker(tracker)
+        })
+        alert.addAction(UIAlertAction(
+            title: "Отменить",
+            style: .cancel
+        ) { _ in
+        })
+        
+        self.present(alert, animated: true, completion: nil)
     }
 }

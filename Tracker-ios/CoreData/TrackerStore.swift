@@ -81,6 +81,16 @@ final class TrackerStore: NSObject {
         CoreDataStack.shared.saveContext(context)
     }
     
+    func deleteTracker(_ tracker: Tracker) throws {
+        guard let fetchedResultController = fetchedResultController else { return }
+        let tracker = fetchedResultController.fetchedObjects?.first { $0.id == tracker.id }
+        
+        guard let tracker = tracker else { return }
+        
+        context.delete(tracker)
+        CoreDataStack.shared.saveContext(context)
+    }
+    
     func changePinTracker(_ tracker: Tracker) throws {
         let fetchedTracker = fetchedResultController?.fetchedObjects?.first {
             $0.id == tracker.id

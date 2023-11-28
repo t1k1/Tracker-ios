@@ -166,7 +166,7 @@ extension CreateHabitViewController: UITableViewDataSource {
             ) as? TextFieldCell else {
                 return UITableViewCell()
             }
-            cell.text = editTracker?.name
+            cell.text = self.habitName
             cell.delegate = self
             cell.configureCell()
             

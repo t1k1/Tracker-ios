@@ -151,6 +151,19 @@ class TrackerViewController: UIViewController {
         
         return collectionView
     }()
+    private lazy var filterButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        
+        button.setTitle("Фильтры", for: .normal)
+        button.backgroundColor = .ypBlue
+        button.setTitleColor(.white, for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 17.0, weight: .regular)
+        button.layer.cornerRadius = 16
+        button.addTarget(self, action: #selector(showFilters), for: .touchUpInside)
+        
+        return button
+    }()
     
     //MARK: - Private variables
     private let categoryStore = TrackerCategoryStore.shared
@@ -161,7 +174,8 @@ class TrackerViewController: UIViewController {
     private var visibleCategories: [TrackerCategory] = []
     private var pinnedTrackers: [Tracker] = []
     private var currentDate: Date?
-   
+    private var currentFilter: Filter?
+    
     //MARK: - Lyfecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -301,6 +315,7 @@ extension TrackerViewController: UICollectionViewDataSource {
 //MARK: - UICollectionViewDelegate
 extension TrackerViewController: UICollectionViewDelegate {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
+        filterButton.isHidden = collectionView.isHidden && currentFilter == nil
         return visibleCategories.count
     }
     
@@ -379,6 +394,22 @@ extension TrackerViewController: TrackerCellDelegate {
     }
 }
 
+//MARK: - TrackerCellDelegate
+extension TrackerViewController: FiltesViewControllerDelegate {
+    func changeCurrentFilter(_ filter: Filter) {
+        currentFilter = filter
+        canselSearch()
+        
+        switch currentFilter {
+            case .todayTrackers:
+                datePicker.date = Date()
+                filterDate()
+            default:
+                updateCategories()
+        }
+    }
+}
+
 private extension TrackerViewController {
     //MARK: - Configurating functions
     func setUpView() {
@@ -417,6 +448,8 @@ private extension TrackerViewController {
         
         view.addSubview(centerImageView)
         view.addSubview(centerLabel)
+        
+        view.addSubview(filterButton)
     }
     
     func configureConstraints() {
@@ -451,7 +484,12 @@ private extension TrackerViewController {
             centerImageView.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),
             
             centerLabel.topAnchor.constraint(equalTo: centerImageView.bottomAnchor, constant: 8),
-            centerLabel.centerXAnchor.constraint(equalTo: centerImageView.centerXAnchor)
+            centerLabel.centerXAnchor.constraint(equalTo: centerImageView.centerXAnchor),
+            
+            filterButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            filterButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -17),
+            filterButton.heightAnchor.constraint(equalToConstant: 50),
+            filterButton.widthAnchor.constraint(equalToConstant: 114)
         ])
     }
     
@@ -478,6 +516,16 @@ private extension TrackerViewController {
         searchField.resignFirstResponder()
     }
     
+    @objc
+    func showFilters() {
+        let filtesViewController = FiltesViewController()
+        
+        filtesViewController.delegate = self
+        filtesViewController.currentFiler = currentFilter
+        
+        present(filtesViewController, animated: true)
+    }
+    
     //MARK: - Private class functions
     func showFilteredTrackersByDay() {
         currentDate = datePicker.date
@@ -492,8 +540,20 @@ private extension TrackerViewController {
                     $0.numberOfDay == selectDay
                 } == true
                 
+                let filterCompletedTrackers = completedTrackers.contains {
+                    $0.id == tracker.id &&
+                    Calendar.current.component(.weekday, from: $0.date) == selectDay
+                }
+                
+                if currentFilter == .completedTrackers {
+                    return filterDatePicker && filterCompletedTrackers
+                } else if currentFilter == .uncompletedTrackers {
+                    return filterDatePicker && !filterCompletedTrackers
+                }
+                
                 return filterDatePicker
             }
+            
             
             if tracker.isEmpty {
                 return nil

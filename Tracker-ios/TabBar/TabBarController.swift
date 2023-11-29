@@ -12,6 +12,7 @@ final class TabBarController: UITabBarController {
     //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        delegate = self
         
         setupView()
         
@@ -30,6 +31,17 @@ final class TabBarController: UITabBarController {
         )
         
         self.viewControllers = [trackerViewController, statisticsViewController]
+    }
+}
+
+//MARK: - UITabBarControllerDelegate
+extension TabBarController: UITabBarControllerDelegate {
+    func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
+        if let viewController = viewController as? StatisticsViewController {
+            viewController.updateRecords()
+        }
+        
+        return true
     }
 }
 

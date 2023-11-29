@@ -401,7 +401,8 @@ extension TrackerViewController: TrackerCellDelegate {
         guard let completedTrackers = try? recordStore.fetchTrackerRecords() else { return }
         self.completedTrackers = completedTrackers
         
-        collectionView.reloadItems(at: [indexPath])
+        collectionView.reloadData()
+        showFilteredTrackersByDay()
     }
 }
 
@@ -741,6 +742,7 @@ private extension TrackerViewController {
         alert.addAction(UIAlertAction(title: "Удалить",
                                       style: .destructive) { [weak self] _ in
             try? self?.trackerStore.deleteTracker(tracker)
+            try? self?.recordStore.deleteAllRecordsFor(id: tracker.id)
         })
         alert.addAction(UIAlertAction(
             title: "Отменить",

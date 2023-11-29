@@ -108,6 +108,30 @@ final class TrackerRecordStore: NSObject {
         guard let fetchedResultController = fetchedResultController else { return }
         try fetchedResultController.performFetch()
     }
+    
+    func deleteAllRecordsFor(id: UUID) throws {
+        let fetchRequest = NSFetchRequest<TrackerRecordCoreData>(entityName: entityName)
+        
+        fetchRequest.returnsObjectsAsFaults = false
+        fetchRequest.predicate = NSPredicate(
+            format: " %K == %@",
+            #keyPath(TrackerRecordCoreData.trackerID),
+            id as CVarArg
+        )
+        
+        guard let trackerRecords = try? context.fetch(fetchRequest) else {
+            return
+        }
+        
+        trackerRecords.forEach { trackerRecord in
+            context.delete(trackerRecord)
+        }
+        
+        CoreDataStack.shared.saveContext(context)
+        
+        guard let fetchedResultController = fetchedResultController else { return }
+        try fetchedResultController.performFetch()
+    }
 }
 
 //MARK: - Private functions

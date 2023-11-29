@@ -167,6 +167,7 @@ class TrackerViewController: UIViewController {
     }()
     
     //MARK: - Private variables
+    private let analyticsService = AnalyticsService()
     private let categoryStore = TrackerCategoryStore.shared
     private let recordStore = TrackerRecordStore.shared
     private let trackerStore = TrackerStore.shared
@@ -181,10 +182,17 @@ class TrackerViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        analyticsService.reportEvent(event: .open, params: ["screen":"Main"])
+        
         categoryStore.delegate = self
         trackerStore.delegate = self
         updateCategories()
         setUpView()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        analyticsService.reportEvent(event: .close, params: ["screen":"Main"])
     }
 }
 
@@ -380,6 +388,8 @@ extension TrackerViewController: UICollectionViewDelegateFlowLayout {
 //MARK: - TrackerCellDelegate
 extension TrackerViewController: TrackerCellDelegate {
     func updateTrackerRecord(id: UUID, isCompleted: Bool, indexPath: IndexPath) {
+        self.analyticsService.reportEvent(event: .click, params: ["screen":"Main", "item":AnalyticsItems.track.rawValue])
+        
         let trackerRecord = TrackerRecord(id: id, date: datePicker.date)
         
         if isCompleted {
@@ -497,6 +507,8 @@ private extension TrackerViewController {
     //MARK: - Buttons functions
     @objc
     func addTracker() {
+        analyticsService.reportEvent(event: .click, params: ["screen":"Main", "item":AnalyticsItems.add_track.rawValue])
+        
         let addNewTrackerViewController = AddNewTrackerViewController()
         addNewTrackerViewController.delegate = self
         
@@ -519,6 +531,8 @@ private extension TrackerViewController {
     
     @objc
     func showFilters() {
+        analyticsService.reportEvent(event: .click, params: ["screen":"Main", "item":AnalyticsItems.filter.rawValue])
+        
         let filtesViewController = FiltesViewController()
         
         filtesViewController.delegate = self
@@ -653,11 +667,15 @@ private extension TrackerViewController {
         
         let edit = UIAction(title: "Редактировать", image: nil) { [weak self] _ in
             guard let self = self else { return }
+            
+            self.analyticsService.reportEvent(event: .click, params: ["screen":"Main", "item":AnalyticsItems.edit.rawValue])
             self.openEditViewController(for: tracker, daysCount: getComletedCount(id: tracker.id))
         }
         
         let delete = UIAction(title: "Удалить", image: nil, attributes: .destructive) { [weak self] _ in
             guard let self = self else { return }
+            
+            self.analyticsService.reportEvent(event: .click, params: ["screen":"Main", "item":AnalyticsItems.delete.rawValue])
             self.showDeleteAlert(for: tracker)
         }
         

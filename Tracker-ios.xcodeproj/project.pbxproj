@@ -14,6 +14,8 @@
 		D50816E72B15E1280092D57E /* FilterTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50816E62B15E1280092D57E /* FilterTableViewCell.swift */; };
 		D50816EF2B160A570092D57E /* Tracker_ios_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50816EE2B160A570092D57E /* Tracker_ios_Tests.swift */; };
 		D50816FD2B160D410092D57E /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = D50816FC2B160D410092D57E /* SnapshotTesting */; };
+		D50816FF2B1727370092D57E /* AnalyticsEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50816FE2B1727370092D57E /* AnalyticsEvents.swift */; };
+		D50817012B1728D80092D57E /* AnalyticsItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = D50817002B1728D80092D57E /* AnalyticsItems.swift */; };
 		D519FD452B1087CD0000301D /* AnalyticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D519FD442B1087CC0000301D /* AnalyticsService.swift */; };
 		D547B56F2AFCFEC8004BA3A3 /* OnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D547B56E2AFCFEC8004BA3A3 /* OnboardingViewController.swift */; };
 		D547B5712B0209DE004BA3A3 /* OnboardingPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D547B5702B0209DE004BA3A3 /* OnboardingPageViewController.swift */; };
@@ -77,6 +79,8 @@
 		D50816E62B15E1280092D57E /* FilterTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterTableViewCell.swift; sourceTree = "<group>"; };
 		D50816EC2B160A570092D57E /* Tracker-ios_Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Tracker-ios_Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D50816EE2B160A570092D57E /* Tracker_ios_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tracker_ios_Tests.swift; sourceTree = "<group>"; };
+		D50816FE2B1727370092D57E /* AnalyticsEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsEvents.swift; sourceTree = "<group>"; };
+		D50817002B1728D80092D57E /* AnalyticsItems.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsItems.swift; sourceTree = "<group>"; };
 		D519FD442B1087CC0000301D /* AnalyticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsService.swift; sourceTree = "<group>"; };
 		D547B56E2AFCFEC8004BA3A3 /* OnboardingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewController.swift; sourceTree = "<group>"; };
 		D547B5702B0209DE004BA3A3 /* OnboardingPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingPageViewController.swift; sourceTree = "<group>"; };
@@ -291,6 +295,8 @@
 				D5F4C1022AEAA4190011E834 /* TrackerCategoryStoreUpdate.swift */,
 				D50816DF2B10CBA70092D57E /* TrackerStoreUpdate.swift */,
 				D50816E32B15D7A80092D57E /* Filter.swift */,
+				D50816FE2B1727370092D57E /* AnalyticsEvents.swift */,
+				D50817002B1728D80092D57E /* AnalyticsItems.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -529,6 +535,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D59467AA2ACC323000BD76FB /* CreateNewCategoryViewController.swift in Sources */,
+				D50816FF2B1727370092D57E /* AnalyticsEvents.swift in Sources */,
 				D50816E02B10CBA70092D57E /* TrackerStoreUpdate.swift in Sources */,
 				D59467972ACBE92400BD76FB /* AddNewTrackerViewController.swift in Sources */,
 				D50816E42B15D7A80092D57E /* Filter.swift in Sources */,
@@ -536,6 +543,7 @@
 				D5F012BC2AE7C15E00B3AB69 /* DaysValueTransformer.swift in Sources */,
 				D59467B22ACD7D8300BD76FB /* WeekDay.swift in Sources */,
 				D59467B02ACD5E1200BD76FB /* SheduleTableViewCell.swift in Sources */,
+				D50817012B1728D80092D57E /* AnalyticsItems.swift in Sources */,
 				D594679C2ACBFC9B00BD76FB /* TextFieldCell.swift in Sources */,
 				D59467AC2ACC35C500BD76FB /* UITextField+Extensions.swift in Sources */,
 				D59467A52ACC193A00BD76FB /* SelectCategoryViewController.swift in Sources */,

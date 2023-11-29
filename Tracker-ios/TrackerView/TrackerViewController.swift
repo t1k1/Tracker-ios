@@ -148,7 +148,8 @@ class TrackerViewController: UIViewController {
         collectionView.backgroundColor = .ypWhite
         collectionView.delegate = self
         collectionView.dataSource = self
-        
+        collectionView.alwaysBounceVertical = true
+
         return collectionView
     }()
     private lazy var filterButton: UIButton = {
@@ -591,7 +592,7 @@ private extension TrackerViewController {
         var image = UIImage(named: "CenterImage")
         var text = NSLocalizedString("mes4", tableName: "LocalizableStr", comment: "")
         
-        if search {
+        if search || (currentFilter != nil && currentFilter != .allTrackers) {
             image = UIImage(named: "CenterImageSearch")
             text = NSLocalizedString("mes5", tableName: "LocalizableStr", comment: "")
         }

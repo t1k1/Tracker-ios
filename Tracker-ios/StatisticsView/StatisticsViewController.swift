@@ -8,6 +8,7 @@
 import UIKit
 
 class StatisticsViewController: UIViewController {
+    //MARK: - Layout variables
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -63,8 +64,10 @@ class StatisticsViewController: UIViewController {
         return label
     }()
     
+    //MARK: - Private variables
     private let recordStore = TrackerRecordStore.shared
     
+    //MARK: - Lyfecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -78,6 +81,7 @@ class StatisticsViewController: UIViewController {
         setGradientBorder()
     }
     
+    //MARK: - Public functions
     func updateRecords() {
         guard let completedTrackers = try? recordStore.fetchTrackerRecords() else { return }
         completedTrackersResultLabel.text = String(completedTrackers.count)
@@ -89,6 +93,7 @@ class StatisticsViewController: UIViewController {
     }
 }
 
+//MARK: - Public functions
 private extension StatisticsViewController {
     func setUpView() {
         view.backgroundColor = UIColor.ypWhite
@@ -154,5 +159,4 @@ private extension StatisticsViewController {
         
         completedTrackersView.layer.addSublayer(border)
     }
-    
 }

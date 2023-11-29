@@ -28,6 +28,7 @@ final class FilterTableViewCell: UITableViewCell {
         return imageview
     }()
     
+    //MARK: - Main function
     func configureCell(name: String, checkMark: Bool) {
         nameLabel.text = name
         checkImageView.isHidden = !checkMark

@@ -7,14 +7,18 @@
 
 import UIKit
 
+//MARK: - Protocols
 protocol FiltesViewControllerDelegate: AnyObject {
     func changeCurrentFilter(_ filter: Filter)
 }
 
+//MARK: - FiltesViewController
 final class FiltesViewController: UIViewController {
+    //MARK: - Public variables
     weak var delegate: FiltesViewControllerDelegate?
     var currentFiler: Filter?
     
+    //MARK: - Layout variables
     private lazy var headerLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -25,7 +29,6 @@ final class FiltesViewController: UIViewController {
         
         return label
     }()
-    
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -41,8 +44,10 @@ final class FiltesViewController: UIViewController {
         return tableView
     }()
     
+    //MARK: - Private variables
     private let allFilters = Filter.allCases
     
+    //MARK: - Lyfecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -50,6 +55,7 @@ final class FiltesViewController: UIViewController {
     }
 }
 
+//MARK: - UITableViewDataSource
 extension FiltesViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         allFilters.count
@@ -71,6 +77,7 @@ extension FiltesViewController: UITableViewDataSource {
     }
 }
 
+//MARK: - UITableViewDelegate
 extension FiltesViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let _ = tableView.cellForRow(at: indexPath) as? FilterTableViewCell {
@@ -79,6 +86,7 @@ extension FiltesViewController: UITableViewDelegate {
     }
 }
 
+//MARK: - Privtae functions
 private extension FiltesViewController {
     func setUpView() {
         view.backgroundColor = .ypWhite

@@ -324,7 +324,7 @@ extension TrackerViewController: UICollectionViewDataSource {
 //MARK: - UICollectionViewDelegate
 extension TrackerViewController: UICollectionViewDelegate {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        filterButton.isHidden = collectionView.isHidden && currentFilter == nil
+        filterButton.isHidden = visibleCategories.count == 0 && currentFilter == nil
         return visibleCategories.count
     }
     

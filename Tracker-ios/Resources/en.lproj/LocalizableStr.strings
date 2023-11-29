@@ -18,6 +18,10 @@
 "mes11" = "Add category";
 "mes12" = "New category";
 "mes13" = "Enter category name";
+"mes14" = "There is nothing to analyze yet";
+"mes15" = "Trackers completed";
+"mes16" = "Editing a Habit";
+"mes17" = "Are you sure you want to delete the tracker?";
 
 "trackers" = "Trackers";
 "statistics" = "Statistics";
@@ -33,6 +37,17 @@
 "everyDay" = "Every day";
 "color" = "Color";
 "done" = "Done";
+"allTrackers" = "All trackers";
+"todayTrackers" = "Trackers for today";
+"Completed" = "Completed";
+"Uncompleted" = "Unfinished";
+"pinned" = "Pinned";
+"filters" = "Filters";
+"save" = "Save";
+"unpin" = "Unpin";
+"pin" = "Pin";
+"edit" = "Edit";
+"delete" = "Delete";
 
 "monday" = "Monday";
 "tuesday" = "Tuesday";

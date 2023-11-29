@@ -20,7 +20,7 @@ final class FiltesViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         
         label.textColor = .ypBlack
-        label.text = "Фильтры"
+        label.text = NSLocalizedString("filters", tableName: "LocalizableStr", comment: "")
         label.font = .systemFont(ofSize: 16, weight: .medium)
         
         return label
@@ -65,7 +65,7 @@ extension FiltesViewController: UITableViewDataSource {
         
         let filter = allFilters[indexPath.row]
         
-        cell.configureCell(name: filter.rawValue, checkMark: currentFiler == filter)
+        cell.configureCell(name: filter.localizedString, checkMark: currentFiler == filter)
         
         return cell
     }

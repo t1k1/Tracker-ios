@@ -156,7 +156,7 @@ class TrackerViewController: UIViewController {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         
-        button.setTitle("Фильтры", for: .normal)
+        button.setTitle(NSLocalizedString("filters", tableName: "LocalizableStr", comment: ""), for: .normal)
         button.backgroundColor = .ypBlue
         button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 17.0, weight: .regular)
@@ -660,20 +660,32 @@ private extension TrackerViewController {
     }
     
     func configureContextMenu(tracker: Tracker) -> UIMenu {
-        let titlePin = tracker.pinned ? "Открепить" : "Закрепить"
+        var titlePin: String
+        if tracker.pinned {
+            titlePin = NSLocalizedString("unpin", tableName: "LocalizableStr", comment: "")
+        } else {
+            titlePin = NSLocalizedString("pin", tableName: "LocalizableStr", comment: "")
+        }
         let pin = UIAction(title: titlePin, image: nil) { [weak self] _ in
             guard let self = self else { return }
             try? self.trackerStore.changePinTracker(tracker)
         }
         
-        let edit = UIAction(title: "Редактировать", image: nil) { [weak self] _ in
+        let edit = UIAction(
+            title: NSLocalizedString("edit", tableName: "LocalizableStr", comment: ""),
+            image: nil
+        ) { [weak self] _ in
             guard let self = self else { return }
             
             self.analyticsService.reportEvent(event: .click, params: ["screen":"Main", "item":AnalyticsItems.edit.rawValue])
             self.openEditViewController(for: tracker, daysCount: getComletedCount(id: tracker.id))
         }
         
-        let delete = UIAction(title: "Удалить", image: nil, attributes: .destructive) { [weak self] _ in
+        let delete = UIAction(
+            title: NSLocalizedString("delete", tableName: "LocalizableStr", comment: ""),
+            image: nil,
+            attributes: .destructive
+        ) { [weak self] _ in
             guard let self = self else { return }
             
             self.analyticsService.reportEvent(event: .click, params: ["screen":"Main", "item":AnalyticsItems.delete.rawValue])
@@ -684,7 +696,7 @@ private extension TrackerViewController {
     }
     
     func showPinnedTrackers() {
-        let headerPinned = "Закрепленные"
+        let headerPinned = NSLocalizedString("pinned", tableName: "LocalizableStr", comment: "")
         let indexPinnedCategory = categories.firstIndex { category in
             category.header == headerPinned
         }
@@ -735,17 +747,17 @@ private extension TrackerViewController {
     
     func showDeleteAlert(for tracker: Tracker) {
         let alert = UIAlertController(
-            title: "Уверены, что хотите удалить трекер?",
+            title: NSLocalizedString("mes17", tableName: "LocalizableStr", comment: ""),
             message: nil,
             preferredStyle: .actionSheet
         )
-        alert.addAction(UIAlertAction(title: "Удалить",
+        alert.addAction(UIAlertAction(title: NSLocalizedString("delete", tableName: "LocalizableStr", comment: ""),
                                       style: .destructive) { [weak self] _ in
             try? self?.trackerStore.deleteTracker(tracker)
             try? self?.recordStore.deleteAllRecordsFor(id: tracker.id)
         })
         alert.addAction(UIAlertAction(
-            title: "Отменить",
+            title: NSLocalizedString("cancel", tableName: "LocalizableStr", comment: ""),
             style: .cancel
         ) { _ in
         })

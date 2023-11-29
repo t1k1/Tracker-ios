@@ -12,7 +12,7 @@ class StatisticsViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
-        label.text = "Статистика"
+        label.text = NSLocalizedString("statistics", tableName: "LocalizableStr", comment: "")
         label.font = .systemFont(ofSize: 34, weight: .bold)
         label.textColor = UIColor.ypBlack
         
@@ -30,7 +30,7 @@ class StatisticsViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
-        label.text = "Анализировать пока нечего"
+        label.text = NSLocalizedString("mes14", tableName: "LocalizableStr", comment: "")
         label.font = .systemFont(ofSize: 12, weight: .medium)
         label.textColor = UIColor.ypBlack
         
@@ -55,7 +55,7 @@ class StatisticsViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
-        label.text = "Трекеров завершено"
+        label.text = NSLocalizedString("mes15", tableName: "LocalizableStr", comment: "")
         label.font = .systemFont(ofSize: 12, weight: .medium)
         label.textColor = UIColor.ypBlack
         label.textAlignment = .left

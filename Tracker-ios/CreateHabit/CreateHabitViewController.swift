@@ -95,7 +95,7 @@ final class CreateHabitViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         
         button.setTitle(
-            "Cохранить",
+            NSLocalizedString("save", tableName: "LocalizableStr", comment: ""),
             for: .normal
         )
         button.addTarget(self, action: #selector(save), for: .touchUpInside)
@@ -288,7 +288,7 @@ private extension CreateHabitViewController {
         
         if let editTracker = editTracker,
            let editCount = editCount {
-            headerLabel.text = "Редактирование привычки"
+            headerLabel.text = NSLocalizedString("mes16", tableName: "LocalizableStr", comment: "")
             countLabel.text = "\(editCount) дней"
             
             self.category = categoryForTracker(editTracker)

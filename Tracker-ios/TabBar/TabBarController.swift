@@ -12,24 +12,36 @@ final class TabBarController: UITabBarController {
     //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        delegate = self
         
         setupView()
         
         let trackerViewController = TrackerViewController()
         trackerViewController.tabBarItem = UITabBarItem(
-            title: "Трекеры",
+            title: NSLocalizedString("trackers", tableName: "LocalizableStr", comment: ""),
             image: UIImage(named: "TabBarTrackerIcon"),
             selectedImage: nil
         )
         
         let statisticsViewController = StatisticsViewController()
         statisticsViewController.tabBarItem = UITabBarItem(
-            title: "Статистика",
+            title: NSLocalizedString("statistics", tableName: "LocalizableStr", comment: ""),
             image: UIImage(named: "TabBarStatisticsIcon"),
             selectedImage: nil
         )
         
         self.viewControllers = [trackerViewController, statisticsViewController]
+    }
+}
+
+//MARK: - UITabBarControllerDelegate
+extension TabBarController: UITabBarControllerDelegate {
+    func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
+        if let viewController = viewController as? StatisticsViewController {
+            viewController.updateRecords()
+        }
+        
+        return true
     }
 }
 

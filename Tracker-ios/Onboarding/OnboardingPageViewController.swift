@@ -19,10 +19,7 @@ final class OnboardingPageViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
-        label.text = """
-        Отслеживайте только
-        то, что хотите
-        """
+        label.text = NSLocalizedString("mes1", tableName: "LocalizableStr", comment: "")
         
         label.font = .systemFont(ofSize: 32, weight: .bold)
         label.textColor = UIColor.ypBlack
@@ -37,7 +34,14 @@ final class OnboardingPageViewController: UIViewController {
         
         button.layer.cornerRadius = 16
         button.backgroundColor = UIColor.ypBlack
-        button.setTitle("Вот это технологии!", for: .normal)
+        button.setTitle(
+            NSLocalizedString(
+                "mes3",
+                tableName: "LocalizableStr",
+                comment: ""
+            ),
+            for: .normal
+        )
         button.titleLabel?.textColor = UIColor.ypWhite
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.addTarget(self, action: #selector(buttonTouch), for: .touchUpInside)
@@ -60,7 +64,7 @@ final class OnboardingPageViewController: UIViewController {
     //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         addSubViews()
         configureConstraints()
     }

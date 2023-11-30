@@ -13,38 +13,38 @@ enum WeekDay: CaseIterable, Codable {
     var dayName: String {
         switch self {
             case .monday:
-                return "Понедельник"
+                return NSLocalizedString("monday", tableName: "LocalizableStr", comment: "")
             case .tuesday:
-                return "Вторник"
+                return NSLocalizedString("tuesday", tableName: "LocalizableStr", comment: "")
             case .wednesday:
-                return "Среда"
+                return NSLocalizedString("wednesday", tableName: "LocalizableStr", comment: "")
             case .thursday:
-                return "Четверг"
+                return NSLocalizedString("thursday", tableName: "LocalizableStr", comment: "")
             case .friday:
-                return "Пятница"
+                return NSLocalizedString("friday", tableName: "LocalizableStr", comment: "")
             case .saturday:
-                return "Суббота"
+                return NSLocalizedString("saturday", tableName: "LocalizableStr", comment: "")
             case .sunday:
-                return "Воскресенье"
+                return NSLocalizedString("sunday", tableName: "LocalizableStr", comment: "")
         }
        
     }
     var shortDayName: String {
         switch self {
             case .monday:
-                return "Пн"
+                return NSLocalizedString("mon", tableName: "LocalizableStr", comment: "")
             case .tuesday:
-                return "Вт"
+                return NSLocalizedString("tue", tableName: "LocalizableStr", comment: "")
             case .wednesday:
-                return "Ср"
+                return NSLocalizedString("wed", tableName: "LocalizableStr", comment: "")
             case .thursday:
-                return "Чт"
+                return NSLocalizedString("thu", tableName: "LocalizableStr", comment: "")
             case .friday:
-                return "Пт"
+                return NSLocalizedString("fri", tableName: "LocalizableStr", comment: "")
             case .saturday:
-                return "Сб"
+                return NSLocalizedString("sat", tableName: "LocalizableStr", comment: "")
             case .sunday:
-                return "Вс"
+                return NSLocalizedString("sun", tableName: "LocalizableStr", comment: "")
         }
     }
     var numberOfDay: Int {

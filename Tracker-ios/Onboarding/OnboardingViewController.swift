@@ -12,11 +12,11 @@ final class OnboardingViewController: UIPageViewController {
     private lazy var pages: [UIViewController] = {
         let first = OnboardingPageViewController(
             image: UIImage(named: "OnboardingImage1"),
-            textLabel: "Отслеживайте только \n то, что хотите"
+            textLabel: NSLocalizedString("mes1", tableName: "LocalizableStr", comment: "")
         )
         let second = OnboardingPageViewController(
             image: UIImage(named: "OnboardingImage2"),
-            textLabel: "Даже если это \n не литры воды и йога"
+            textLabel: NSLocalizedString("mes2", tableName: "LocalizableStr", comment: "")
         )
         
         return [first, second]

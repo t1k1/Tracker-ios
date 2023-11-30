@@ -13,7 +13,7 @@ final class CreateNewCategoryViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
-        label.text = "Новая категория"
+        label.text = NSLocalizedString("mes12", tableName: "LocalizableStr", comment: "")
         label.font = .systemFont(ofSize: 16, weight: .medium)
         label.textColor = UIColor.ypBlack
         
@@ -25,7 +25,7 @@ final class CreateNewCategoryViewController: UIViewController {
         
         textField.setLeftPaddingPoints(10)
         textField.autocorrectionType = UITextAutocorrectionType.no
-        textField.placeholder = "Введите название категории"
+        textField.placeholder = NSLocalizedString("mes13", tableName: "LocalizableStr", comment: "")
         textField.backgroundColor = UIColor.ypBackground
         textField.layer.cornerRadius = 16
         textField.delegate = self
@@ -36,7 +36,10 @@ final class CreateNewCategoryViewController: UIViewController {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         
-        button.setTitle("Добавить категорию", for: .normal)
+        button.setTitle(
+            NSLocalizedString("mes11", tableName: "LocalizableStr", comment: ""),
+            for: .normal
+        )
         button.addTarget(self, action: #selector(done), for: .touchUpInside)
         button.backgroundColor = UIColor.ypGray
         button.setTitleColor(UIColor.ypWhite, for: .normal)

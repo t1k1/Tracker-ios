@@ -23,7 +23,7 @@ final class SelectSheduleViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
-        label.text = "Расписание"
+        label.text = NSLocalizedString("shedule", tableName: "LocalizableStr", comment: "")
         label.font = .systemFont(ofSize: 16, weight: .medium)
         label.textColor = UIColor.ypBlack
         
@@ -33,7 +33,10 @@ final class SelectSheduleViewController: UIViewController {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         
-        button.setTitle("Готово", for: .normal)
+        button.setTitle(
+            NSLocalizedString("done", tableName: "LocalizableStr", comment: ""),
+            for: .normal
+        )
         button.addTarget(self, action: #selector(done), for: .touchUpInside)
         button.backgroundColor = UIColor.ypBlack
         button.setTitleColor(UIColor.ypWhite, for: .normal)

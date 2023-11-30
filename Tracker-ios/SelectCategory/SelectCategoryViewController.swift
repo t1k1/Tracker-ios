@@ -18,7 +18,7 @@ final class SelectCategoryViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
-        label.text = "Категории"
+        label.text = NSLocalizedString("categories", tableName: "LocalizableStr", comment: "")
         label.font = .systemFont(ofSize: 16, weight: .medium)
         label.textColor = UIColor.ypBlack
         
@@ -36,10 +36,7 @@ final class SelectCategoryViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
-        label.text = """
-        Привычки и события можно
-        объединить по смыслу
-        """
+        label.text = NSLocalizedString("mes10", tableName: "LocalizableStr", comment: "")
         label.font = .systemFont(ofSize: 12, weight: .medium)
         label.textColor = UIColor.ypBlack
         label.textAlignment = .center
@@ -51,7 +48,10 @@ final class SelectCategoryViewController: UIViewController {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         
-        button.setTitle("Добавить категорию", for: .normal)
+        button.setTitle(
+            NSLocalizedString("mes11", tableName: "LocalizableStr", comment: ""),
+            for: .normal
+        )
         button.addTarget(self, action: #selector(addCategory), for: .touchUpInside)
         button.backgroundColor = UIColor.ypBlack
         button.setTitleColor(UIColor.ypWhite, for: .normal)

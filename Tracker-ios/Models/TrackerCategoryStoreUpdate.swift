@@ -1,13 +1,13 @@
 //
-//  TrackerStoreUpdate.swift
+//  TrackerCategoryStoreUpdate.swift
 //  Tracker-ios
 //
-//  Created by Aleksey Kolesnikov on 24.11.2023.
+//  Created by Aleksey Kolesnikov on 26.10.2023.
 //
 
 import Foundation
 
-struct TrackerStoreUpdate {
+struct TrackerCategoryStoreUpdate {
     struct Move: Hashable {
         let oldIndex: Int
         let newIndex: Int

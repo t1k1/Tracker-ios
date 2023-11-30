@@ -10,7 +10,7 @@ import CoreData
 
 //MARK: - Protocols
 protocol TrackerCategoryStoreDelegate: AnyObject {
-    func store(_ categoryStore: TrackerCategoryStore, didUpdate update: TrackerStoreUpdate)
+    func store(_ categoryStore: TrackerCategoryStore, didUpdate update: TrackerCategoryStoreUpdate)
 }
 
 //MARK: - TrackerCategoryStore
@@ -26,7 +26,7 @@ final class TrackerCategoryStore: NSObject {
     private var insertedIndexes: IndexSet?
     private var deletedIndexes: IndexSet?
     private var updatedIndexes: IndexSet?
-    private var movedIndexes: Set<TrackerStoreUpdate.Move>?
+    private var movedIndexes: Set<TrackerCategoryStoreUpdate.Move>?
     
     //MARK: - Initialization
     convenience override init() {
@@ -84,6 +84,18 @@ final class TrackerCategoryStore: NSObject {
         guard let fetchedResultController = fetchedResultController else { return }
         try? fetchedResultController.performFetch()
     }
+    
+    func fetchCategory(forTracker tracker: Tracker) throws -> TrackerCategory? {
+        let fetchRequest = TrackerCategoryCoreData.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "ANY trackers.id == %@", tracker.id.uuidString)
+        
+        guard let trackerCategoriesCoreData = try? context.fetch(fetchRequest),
+              let trackerCategoryCoreData = trackerCategoriesCoreData.first else {
+            return nil
+        }
+    
+        return try convertToTrackerCategory(data: trackerCategoryCoreData)
+    }
 }
 
 //MARK: - NSFetchedResultsControllerDelegate
@@ -93,7 +105,7 @@ extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
         insertedIndexes = IndexSet()
         deletedIndexes = IndexSet()
         updatedIndexes = IndexSet()
-        movedIndexes = Set<TrackerStoreUpdate.Move>()
+        movedIndexes = Set<TrackerCategoryStoreUpdate.Move>()
     }
     
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
@@ -105,7 +117,7 @@ extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
         }
         delegate?.store(
             self,
-            didUpdate: TrackerStoreUpdate(
+            didUpdate: TrackerCategoryStoreUpdate(
                 insertedIndexes: insertedIndexes,
                 deletedIndexes: deletedIndexes,
                 updatedIndexes: updatedIndexes,
@@ -174,6 +186,7 @@ private extension TrackerCategoryStore {
                     name: name,
                     color: color,
                     emoji: emoji,
+                    pinned: trackerCoreData.pinned,
                     shedule: daysValueTransformer.stringToWeekDays(strShedule)
                 )
             )

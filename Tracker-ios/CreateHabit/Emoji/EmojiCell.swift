@@ -10,6 +10,7 @@ import UIKit
 final class EmojiCell: UITableViewCell {
     //MARK: - Public variables
     var delegate: EmojiCellDelegate?
+    var selectedEmoji: String?
     
     //MARK: - Layout variables
     private lazy var headerLabel: UILabel = {
@@ -46,6 +47,7 @@ final class EmojiCell: UITableViewCell {
     
     //MARK: - Main function
     func configureCell() {
+        contentView.backgroundColor = UIColor.ypWhite
         selectionStyle = .none
         
         addSubViews()
@@ -64,6 +66,12 @@ extension EmojiCell: UICollectionViewDataSource {
         guard let cell = cell else { return UICollectionViewCell() }
         
         cell.configureCell(emoji: emoji[indexPath.row])
+        
+        if let selectedEmoji = selectedEmoji,
+           selectedEmoji == emoji[indexPath.row] {
+            emojiCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: UICollectionView.ScrollPosition.centeredHorizontally)
+            cell.backgroundColor = UIColor.ypLightGray
+        }
         
         return cell
     }

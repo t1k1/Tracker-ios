@@ -182,7 +182,7 @@ class TrackerViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        analyticsService.reportEvent(event: .open, params: ["screen":"Main"])
+        analyticsService.reportEvent(event: .open, params: [AnalyticsKeys.screen.rawValue:AnalyticsKeys.main.rawValue])
         
         categoryStore.delegate = self
         trackerStore.delegate = self
@@ -192,7 +192,7 @@ class TrackerViewController: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        analyticsService.reportEvent(event: .close, params: ["screen":"Main"])
+        analyticsService.reportEvent(event: .close, params: [AnalyticsKeys.screen.rawValue:AnalyticsKeys.main.rawValue])
     }
 }
 
@@ -388,7 +388,10 @@ extension TrackerViewController: UICollectionViewDelegateFlowLayout {
 //MARK: - TrackerCellDelegate
 extension TrackerViewController: TrackerCellDelegate {
     func updateTrackerRecord(id: UUID, isCompleted: Bool, indexPath: IndexPath) {
-        self.analyticsService.reportEvent(event: .click, params: ["screen":"Main", "item":AnalyticsItems.track.rawValue])
+        analyticsService.reportEvent(event: .click, params: [
+            AnalyticsKeys.screen.rawValue:AnalyticsKeys.main.rawValue,
+            AnalyticsKeys.item.rawValue:AnalyticsItems.track.rawValue
+        ])
         
         let trackerRecord = TrackerRecord(id: id, date: datePicker.date)
         
@@ -508,7 +511,10 @@ private extension TrackerViewController {
     //MARK: - Buttons functions
     @objc
     func addTracker() {
-        analyticsService.reportEvent(event: .click, params: ["screen":"Main", "item":AnalyticsItems.add_track.rawValue])
+        analyticsService.reportEvent(event: .click, params: [
+            AnalyticsKeys.screen.rawValue:AnalyticsKeys.main.rawValue,
+            AnalyticsKeys.item.rawValue:AnalyticsItems.add_track.rawValue
+        ])
         
         let addNewTrackerViewController = AddNewTrackerViewController()
         addNewTrackerViewController.delegate = self
@@ -532,7 +538,10 @@ private extension TrackerViewController {
     
     @objc
     func showFilters() {
-        analyticsService.reportEvent(event: .click, params: ["screen":"Main", "item":AnalyticsItems.filter.rawValue])
+        analyticsService.reportEvent(event: .click, params: [
+            AnalyticsKeys.screen.rawValue:AnalyticsKeys.main.rawValue,
+            AnalyticsKeys.item.rawValue:AnalyticsItems.filter.rawValue
+        ])
         
         let filtesViewController = FiltesViewController()
         
@@ -677,7 +686,10 @@ private extension TrackerViewController {
         ) { [weak self] _ in
             guard let self = self else { return }
             
-            self.analyticsService.reportEvent(event: .click, params: ["screen":"Main", "item":AnalyticsItems.edit.rawValue])
+            self.analyticsService.reportEvent(event: .click, params: [
+                AnalyticsKeys.screen.rawValue:AnalyticsKeys.main.rawValue,
+                AnalyticsKeys.item.rawValue:AnalyticsItems.edit.rawValue
+            ])
             self.openEditViewController(for: tracker, daysCount: getComletedCount(id: tracker.id))
         }
         
@@ -688,7 +700,10 @@ private extension TrackerViewController {
         ) { [weak self] _ in
             guard let self = self else { return }
             
-            self.analyticsService.reportEvent(event: .click, params: ["screen":"Main", "item":AnalyticsItems.delete.rawValue])
+            self.analyticsService.reportEvent(event: .click, params: [
+                AnalyticsKeys.screen.rawValue:AnalyticsKeys.main.rawValue,
+                AnalyticsKeys.item.rawValue:AnalyticsItems.delete.rawValue
+            ])
             self.showDeleteAlert(for: tracker)
         }
         
